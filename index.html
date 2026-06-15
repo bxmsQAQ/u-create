@@ -156,6 +156,7 @@
       <button class="menu-btn" onclick="navigateTo('page-api')">🔌 API设置</button>
       <button class="menu-btn" onclick="navigateTo('page-prompt')">📝 提示词（Prompt）设置</button>
       <button class="menu-btn" onclick="navigateTo('page-generate')">🚀 人设生成，启动！</button>
+      <button class="menu-btn" onclick="navigateTo('page-imggen')">🎨 人物生图</button>
       <button class="menu-btn" onclick="navigateTo('page-archive')">📁 存档区</button>
     </div>
     <div class="page" id="page-api">
@@ -290,6 +291,65 @@
       <button class="btn-small" onclick="copyResult('polish')">📋 复制</button>
       <button class="btn-small" onclick="saveToArchive('polish')">💾 存档</button>
       <button class="btn-small" onclick="doPolish()">🔄 重新润色</button>
+    </div>
+  </div>
+    </div>
+    <div class="page" id="page-imggen">
+  <div class="page-header"><button class="back-btn" onclick="navigateTo('page-main')">返回</button><div class="page-title">🎨 人物生图</div></div>
+
+  <div class="section-box">
+    <div class="section-title">📄 人设内容</div>
+    <p class="prompt-hint">粘贴人设文本，或导入文件（支持 .txt / .docx / .json / .png）</p>
+    <div class="form-group">
+      <textarea class="form-textarea" id="imggen-input" placeholder="在此粘贴角色的人设内容，AI将根据这些信息生成人物图片…" style="min-height:180px;"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">或从文件导入</label>
+      <input type="file" accept=".txt,.docx,.json,.png" id="imggen-file-input" onchange="handleImggenFileImport()" style="font-size:13px;">
+      <div class="upload-file-name" id="imggen-file-name"></div>
+    </div>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">📐 图片比例</div>
+    <div class="tag-wrap" id="wrap-imggen-ratio" data-section="imggen-ratio" data-sub="" data-type="single">
+      <span class="tag-bubble" data-tag="1:1" onclick="handleTagClick(this);updateImggenRatio()">1:1</span>
+      <span class="tag-bubble selected" data-tag="3:4" onclick="handleTagClick(this);updateImggenRatio()">3:4</span>
+      <span class="tag-bubble" data-tag="4:3" onclick="handleTagClick(this);updateImggenRatio()">4:3</span>
+      <span class="tag-bubble" data-tag="9:16" onclick="handleTagClick(this);updateImggenRatio()">9:16</span>
+      <span class="tag-bubble" data-tag="16:9" onclick="handleTagClick(this);updateImggenRatio()">16:9</span>
+      <span class="tag-bubble" data-tag="2:3" onclick="handleTagClick(this);updateImggenRatio()">2:3</span>
+      <span class="tag-bubble" data-tag="3:2" onclick="handleTagClick(this);updateImggenRatio()">3:2</span>
+      <span class="tag-bubble" data-tag="custom" onclick="handleTagClick(this);updateImggenRatio()">自定义</span>
+    </div>
+    <div class="form-group" id="imggen-custom-ratio-row" style="display:none;margin-top:10px;">
+      <label class="form-label">自定义比例（格式如 7:9）</label>
+      <input class="form-input" type="text" id="imggen-custom-ratio" placeholder="例：7:9" style="width:120px;">
+    </div>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">📝 生图要求</div>
+    <p class="prompt-hint">可自行修改生图指令</p>
+    <div class="form-group">
+      <textarea class="form-textarea" id="imggen-prompt" style="min-height:100px;">Based on the character description provided, generate a high-quality anime/semi-realistic character portrait illustration. Focus on the character's face and upper body. Include detailed facial features, expressive eyes, and appropriate hairstyle, hair color, and eye color as described. Clothing and accessories should match the character's setting and personality. Use soft, flattering lighting with a visually appealing color palette. The background should be simple and complementary, not distracting. Style: clean linework, vibrant colors, professional illustration quality.</textarea>
+    </div>
+    <button class="btn-primary" onclick="saveImggenPrompt()">保存</button>
+  </div>
+
+  <div class="generate-actions">
+    <button class="btn-generate" id="btn-imggen" onclick="doImggen()">🎨 生成图片</button>
+  </div>
+
+  <div class="result-box" id="imggen-result-box">
+    <div class="result-header">
+      <span class="result-title">🖼️ 生成结果</span>
+      <span class="result-status" id="imggen-result-status"></span>
+    </div>
+    <div id="imggen-result-content" style="text-align:center;min-height:60px;"></div>
+    <div class="result-actions" id="imggen-result-actions" style="display:none;">
+      <button class="btn-small" onclick="downloadImggenResult()">💾 保存图片</button>
+      <button class="btn-small" onclick="doImggen()">🔄 重新生成</button>
     </div>
   </div>
     </div>
@@ -669,7 +729,173 @@
     function updateSummary(){const parts=[];const name=document.getElementById('gen-name')?.value.trim();const nickname=document.getElementById('gen-nickname')?.value.trim();const gender=document.getElementById('gen-gender')?.value.trim();const age=document.getElementById('gen-age')?.value.trim();if(name)parts.push(`【姓名】${name}`);if(nickname)parts.push(`【外号】${nickname}`);if(gender)parts.push(`【性别】${gender}`);if(age)parts.push(`【年龄】${age}`);const charInfo=document.getElementById('gen-char-info')?.value.trim();if(charInfo)parts.push(`【char信息】${charInfo}`);document.querySelectorAll('#general-tags-container .tag-wrap').forEach(wrap=>{const type=wrap.dataset.type;const selected=[];wrap.querySelectorAll('.tag-bubble').forEach(b=>{if(type==='three'){if(b.classList.contains('liked'))selected.push('👍'+b.dataset.tag);else if(b.classList.contains('disliked'))selected.push('👎'+b.dataset.tag);}else{if(b.classList.contains('selected'))selected.push(b.dataset.tag);}});if(selected.length){const sectionEl=wrap.closest('.tag-section');const titleEl=sectionEl?.querySelector('.tag-section-title');const sectionTitle=titleEl?titleEl.textContent.replace(/^\d+\.\s*/,''):'';let subTitle='';const prev=wrap.previousElementSibling;if(prev&&prev.classList.contains('tag-subsection-title'))subTitle=prev.textContent.replace(/（.*）/,'');const label=subTitle?`【${sectionTitle}-${subTitle}】`:`【${sectionTitle}】`;parts.push(`${label}${selected.join('、')}`);}});const summaryEl=document.getElementById('general-summary');if(!parts.length){summaryEl.innerHTML='<span class="summary-empty">还没有选择任何标签…</span>';}else{summaryEl.textContent=parts.join('\n');}}
 
     // Init
-    loadApi('text');loadApi('img');loadPrompt('text');loadPrompt('img');renderArchives();renderGeneralTags();
+    
+    // ===== Image Generation Page =====
+    async function handleImggenFileImport() {
+      const input = document.getElementById('imggen-file-input');
+      const nameEl = document.getElementById('imggen-file-name');
+      if (!input.files.length) return;
+      const file = input.files[0];
+      nameEl.textContent = '已选择: ' + file.name;
+      const ext = file.name.split('.').pop().toLowerCase();
+
+      if (ext === 'txt') {
+        document.getElementById('imggen-input').value = await file.text();
+      } else if (ext === 'json') {
+        try {
+          const text = await file.text();
+          const json = JSON.parse(text);
+          let content = '';
+          if (json.data?.description) content = json.data.description;
+          else if (json.description) content = json.description;
+          else if (json.char_persona) content = json.char_persona;
+          else content = JSON.stringify(json, null, 2);
+          document.getElementById('imggen-input').value = content;
+        } catch (e) { document.getElementById('imggen-input').value = await file.text(); }
+      } else if (ext === 'png') {
+        try {
+          const buffer = await file.arrayBuffer();
+          const bytes = new Uint8Array(buffer);
+          const textDecoder = new TextDecoder();
+          const fullText = textDecoder.decode(bytes);
+          const charaIdx = fullText.indexOf('chara');
+          if (charaIdx !== -1) {
+            let start = charaIdx + 5;
+            while (start < bytes.length && bytes[start] === 0) start++;
+            let end = start;
+            while (end < bytes.length && bytes[end] !== 0 && bytes[end] !== 0xAE) end++;
+            try {
+              const decoded = atob(fullText.substring(start, end).trim());
+              const json角'; }
+        } catch (e8Array(buffer));
+          constMatches = raw.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+          if (wtMatches) { document.getElementById('imggen-input').value = wtMatches.map(m => m.replace(/<[^>]+>/g, '')).join(''); }
+          else { document.getElementById('imggen-input').value = '（docx解析失败，建议用txt）'; }
+        } catch(e) { document.getElementById('imggen-input').value = '（docx读取失败）'; }
+      }
+    }
+
+    function updateImggenRatio() {
+      const customRow = document.getElementById('imggen-custom-ratio-row');
+      const selected = document.querySelector('#wrap-imggen-ratio .tag-bubble.selected');
+      if (selected && selected.dataset.tag === 'custom') {
+        customRow.style.display = 'block';
+      } else {
+        customRow.style.display = 'none';
+      }
+    }
+
+    function getImggenSize() {
+      const selected = document.querySelector('#wrap-imggen-ratio .tag-bubble.selected');
+      let ratio = selected ? selected.dataset.tag : '3:4';
+      if (ratio === 'custom') {
+        ratio = document.getElementById('imggen-custom-ratio').value.trim() || '3:4';
+      }
+      const sizeMap = {
+        '1:1': '1024x1024',
+        '3:4': '768x1024',
+        '4:3': '1024x768',
+        '9:16': '576x1024',
+        '16:9': '1024x576',
+        '2:3': '682'
+      };
+      if (sizeMap[ratio]) return sizeMap[ratio];
+      // Parse custom ratio
+      const parts = ratio.split(':');
+      if (parts.length === 2) {
+        const w = parseInt(parts[0]), h = parseInt(parts[1]);Math
+      localStoragegetElementById('btn-imggen');
+        btn.textContent = '🎨 生成图片'; btn.style.background = '';
+        return;
+      }
+
+      const charDesc = document.getElementById('imggen-input').value.trim();
+      if (!charDesc) { showToast('请先输入或导入人设内容！'); return; }
+
+      const apiConfig = getApiConfig('img');
+      if (!apiConfig || !apiConfig.url || !apiConfig.key) { showToast('请先在 API设置 中配置生图API！'); return; }
+
+      const imgPromptTemplate = document.getElementById('imggen-prompt').value.trim();
+      const fullPrompt = imgPromptTemplate + '\n\nCharacter description:\n' + charDesc;
+      const size = getImggenSize();
+
+      isGenerating = true; abortController = new AbortController();
+      const btn = document.getElementById('btn-imggen');
+      btn.textContent = '⏹ 停止生成'; btn.style.background = '#c53030';
+
+      const resultBox = document.getElementById('imggen-result-box');
+      const resultContent = document.getElementById('imggen-result-content');
+      const resultStatus = document.getElementById('imggen-result-status');
+      const resultActions = document.getElementById('imggen-result-actions');
+
+      resultBox.classList.add('show');
+      resultContent.innerHTML = '<div class="empty-state" style="padding:30px;">🎨 图片生成中，请稍候…</div>';
+      resultStatus.textContent = '生成中…'; resultStatus.className = 'result-status generating';
+      resultActions.style.display = 'none';
+      setTimeout(() => resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+      try {
+        const res = await fetch(apiConfig.url.replace(/\/+$/, '') + '/images/generations', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + apiConfig.key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: apiConfig.model || 'dall-e-3',
+            prompt: fullPrompt,
+            n: 1,
+            size: size
+          }),
+          signal: abortController.signal
+        });
+
+        if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + (await res.text()).slice(0, 300));
+
+        const data = await res.json();
+        let imgSrc = '';
+
+        if (data.data && data.data[0]) {
+          if (data.data[0].url) {
+            imgSrc = data.data[0].url;
+          } else if (data.data[0].b64_json) {
+            imgSrc = 'data:image/png;base64,' + data.data[0].b64_json;
+          }
+        }
+
+        if (imgSrc) {
+          imggenUrl = imgSrc;
+          resultContent.innerHTML = `<img src="${imgSrc}" style="max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin:8px 0;" alt="生成的角色图片" onclick="window.open(this.src,'_blank')"><p style="font-size:12px;color:#999;margin-top:8px;">点击图片可查看大图</p>`;
+          resultStatus.textContent = '生成完毕'; resultStatus.className = 'result-status';
+          resultActions.style.display = 'flex';
+        } else {
+          throw new Error('API返回数据中没有找到图片');
+        }
+
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          resultContent.innerHTML = '<div class="empty-state">已停止</div>';
+          resultStatus.textContent = '已停止'; resultStatus.className = 'result-status';
+        } else {
+          resultStatus.textContent = '出错了'; resultStatus.className = 'result-status';
+          resultContent.innerHTML = `<div style="text-align:left;font-size:14px;color:#c53030;padding:12px;">布豪！生图报错了！<br><br>错误信息：${escapeHtml(err.message)}<br><br>可能的原因：<br>• 生图API地址或密钥不正确<br>• 模型名称有误<br>• 该模型不支持当前图片尺寸<br>• 余额不足<br><br>请检查 API 设置后重试。</div>`;
+        }
+      }
+
+      isGenerating = false; abortController = null;
+      btn.textContent = '🎨 生成图片'; btn.style.background = '';
+    }
+
+    function downloadImggenResult() {
+      if (!imggenUrl) { showToast('没有可保存的图片'); return; }
+      if (imggenUrl.startsWith('data:')) {
+        const a = document.createElement('a');
+        a.href = imggenUrl;
+        a.download = 'ucreate_character_' + Date.now() + '.png';
+        a.click();
+      } else {
+        window.open(imggenUrl, '_blank');
+        showToast('图片已在新标签页打开，请右键保存');
+      }
+    }
+loadApi('text');loadApi('img');loadPrompt('text');loadPrompt('img');loadImggenPrompt();renderArchives();renderGeneralTags();
   </script>
 </body>
 </html>
