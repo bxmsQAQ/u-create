@@ -730,53 +730,121 @@
 
     // Init    
     // ===== Image Generation Page =====
+    let imggenUrl = '';
+
+    function updatePolishSummary() {
+      // 目前润色页不需要实时汇总，这个函数只是防止输入框 oninput 报错
+    }
+
+    function saveImggenPrompt() {
+      const el = document.getElementById('imggen-prompt');
+      if (!el) return;
+      localStorage.setItem('ucreate_imggen_prompt', el.value);
+      showToast('保存成功！');
+    }
+
+    function loadImggenPrompt() {
+      const el = document.getElementById('imggen-prompt');
+      if (!el) return;
+      const saved = localStorage.getItem('ucreate_imggen_prompt');
+      if (saved) el.value = saved;
+    }
+
     async function handleImggenFileImport() {
       const input = document.getElementById('imggen-file-input');
       const nameEl = document.getElementById('imggen-file-name');
+      const textEl = document.getElementById('imggen-input');
+
       if (!input.files.length) return;
+
       const file = input.files[0];
       nameEl.textContent = '已选择: ' + file.name;
+
       const ext = file.name.split('.').pop().toLowerCase();
 
       if (ext === 'txt') {
-        document.getElementById('imggen-input').value = await file.text();
-      } else if (ext === 'json') {
+        textEl.value = await file.text();
+        return;
+      }
+
+      if (ext === 'json') {
         try {
           const text = await file.text();
           const json = JSON.parse(text);
+
           let content = '';
           if (json.data?.description) content = json.data.description;
           else if (json.description) content = json.description;
           else if (json.char_persona) content = json.char_persona;
+          else if (json.persona) content = json.persona;
+          else if (json.data) content = JSON.stringify(json.data, null, 2);
           else content = JSON.stringify(json, null, 2);
-          document.getElementById('imggen-input').value = content;
-        } catch (e) { document.getElementById('imggen-input').value = await file.text(); }
-      } else if (ext === 'png') {
+
+          textEl.value = content;
+        } catch (e) {
+          textEl.value = await file.text();
+        }
+        return;
+      }
+
+      if (ext === 'png') {
         try {
           const buffer = await file.arrayBuffer();
           const bytes = new Uint8Array(buffer);
-          const textDecoder = new TextDecoder();
-          const fullText = textDecoder.decode(bytes);
-          const charaIdx = fullText.indexOf('chara');
-          if (charaIdx !== -1) {
-            let start = charaIdx + 5;
-            while (start < bytes.length && bytes[start] === 0) start++;
-            let end = start;
-            while (end < bytes.length && bytes[end] !== 0 && bytes[end] !== 0xAE) end++;
-            try {
-              const decoded = atob(fullText.substring(start, end).trim());
-              const json角'; }
-        } catch (e8Array(buffer));
-          constMatches = raw.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
-          if (wtMatches) { document.getElementById('imggen-input').value = wtMatches.map(m => m.replace(/<[^>]+>/g, '')).join(''); }
-          else { document.getElementById('imggen-input').value = '（docx解析失败，建议用txt）'; }
-        } catch(e) { document.getElementById('imggen-input').value = '（docx读取失败）'; }
+          const decoder = new TextDecoder('latin1');
+          const raw = decoder.decode(bytes);
+
+          const charaIndex = raw.indexOf('chara');
+
+          if (charaIndex === -1) {
+            textEl.value = '（未检测到 PNG 角色卡数据，请尝试手动粘贴人设内容）';
+            return;
+          }
+
+          let start = charaIndex + 5;
+          while (start < raw.length && raw.charCodeAt(start) === 0) start++;
+
+          let end = start;
+          while (end < raw.length) {
+            const code = raw.charCodeAt(end);
+            if (code === 0 || code === 174) break;
+            end++;
+          }
+
+          const possibleBase64 = raw.slice(start, end).trim();
+
+          try {
+            const decoded = atob(possibleBase64);
+            const json = JSON.parse(decoded);
+
+            let content = '';
+            if (json.data?.description) content = json.data.description;
+            else if (json.description) content = json.description;
+            else if (json.char_persona) content = json.char_persona;
+            else content = JSON.stringify(json, null, 2);
+
+            textEl.value = content;
+          } catch (e) {
+            textEl.value = '（PNG 角色卡解析失败，请尝试手动粘贴人设内容）';
+          }
+        } catch (e) {
+          textEl.value = '（PNG 文件读取失败）';
+        }
+        return;
       }
+
+      if (ext === 'docx') {
+        textEl.value = '（暂不稳定支持直接解析 docx，建议先打开文档复制内容，或另存为 txt 后导入）';
+        return;
+      }
+
+      textEl.value = '（暂不支持该文件格式）';
     }
 
     function updateImggenRatio() {
       const customRow = document.getElementById('imggen-custom-ratio-row');
       const selected = document.querySelector('#wrap-imggen-ratio .tag-bubble.selected');
+
       if (selected && selected.dataset.tag === 'custom') {
         customRow.style.display = 'block';
       } else {
@@ -787,40 +855,76 @@
     function getImggenSize() {
       const selected = document.querySelector('#wrap-imggen-ratio .tag-bubble.selected');
       let ratio = selected ? selected.dataset.tag : '3:4';
+
       if (ratio === 'custom') {
         ratio = document.getElementById('imggen-custom-ratio').value.trim() || '3:4';
       }
+
       const sizeMap = {
         '1:1': '1024x1024',
         '3:4': '768x1024',
         '4:3': '1024x768',
         '9:16': '576x1024',
         '16:9': '1024x576',
-        '2:3': '682'
+        '2:3': '682x1024',
+        '3:2': '1024x682'
       };
+
       if (sizeMap[ratio]) return sizeMap[ratio];
-      // Parse custom ratio
+
       const parts = ratio.split(':');
       if (parts.length === 2) {
-        const w = parseInt(parts[0]), h = parseInt(parts[1]);Math
-      localStoragegetElementById('btn-imggen');
-        btn.textContent = '🎨 生成图片'; btn.style.background = '';
+        const w = parseInt(parts[0]);
+        const h = parseInt(parts[1]);
+
+        if (!isNaN(w) && !isNaN(h) && w > 0 && h > 0) {
+          if (w === h) return '1024x1024';
+          if (w > h) return '1024x768';
+          return '768x1024';
+        }
+      }
+
+      return '768x1024';
+    }
+
+    async function doImggen() {
+      if (isGenerating) {
+        if (abortController) abortController.abort();
+
+        isGenerating = false;
+        abortController = null;
+
+        const btn = document.getElementById('btn-imggen');
+        btn.textContent = '🎨 生成图片';
+        btn.style.background = '';
+
         return;
       }
 
       const charDesc = document.getElementById('imggen-input').value.trim();
-      if (!charDesc) { showToast('请先输入或导入人设内容！'); return; }
+
+      if (!charDesc) {
+        showToast('请先输入或导入人设内容！');
+        return;
+      }
 
       const apiConfig = getApiConfig('img');
-      if (!apiConfig || !apiConfig.url || !apiConfig.key) { showToast('请先在 API设置 中配置生图API！'); return; }
+
+      if (!apiConfig || !apiConfig.url || !apiConfig.key) {
+        showToast('请先在 API设置 中配置生图API！');
+        return;
+      }
 
       const imgPromptTemplate = document.getElementById('imggen-prompt').value.trim();
       const fullPrompt = imgPromptTemplate + '\n\nCharacter description:\n' + charDesc;
       const size = getImggenSize();
 
-      isGenerating = true; abortController = new AbortController();
+      isGenerating = true;
+      abortController = new AbortController();
+
       const btn = document.getElementById('btn-imggen');
-      btn.textContent = '⏹ 停止生成'; btn.style.background = '#c53030';
+      btn.textContent = '⏹ 停止生成';
+      btn.style.background = '#c53030';
 
       const resultBox = document.getElementById('imggen-result-box');
       const resultContent = document.getElementById('imggen-result-content');
@@ -829,14 +933,21 @@
 
       resultBox.classList.add('show');
       resultContent.innerHTML = '<div class="empty-state" style="padding:30px;">🎨 图片生成中，请稍候…</div>';
-      resultStatus.textContent = '生成中…'; resultStatus.className = 'result-status generating';
+      resultStatus.textContent = '生成中…';
+      resultStatus.className = 'result-status generating';
       resultActions.style.display = 'none';
-      setTimeout(() => resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+      setTimeout(() => {
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
 
       try {
         const res = await fetch(apiConfig.url.replace(/\/+$/, '') + '/images/generations', {
           method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + apiConfig.key, 'Content-Type': 'application/json' },
+          headers: {
+            'Authorization': 'Bearer ' + apiConfig.key,
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({
             model: apiConfig.model || 'dall-e-3',
             prompt: fullPrompt,
@@ -846,7 +957,9 @@
           signal: abortController.signal
         });
 
-        if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + (await res.text()).slice(0, 300));
+        if (!res.ok) {
+          throw new Error('HTTP ' + res.status + ': ' + (await res.text()).slice(0, 300));
+        }
 
         const data = await res.json();
         let imgSrc = '';
@@ -859,31 +972,57 @@
           }
         }
 
-        if (imgSrc) {
-          imggenUrl = imgSrc;
-          resultContent.innerHTML = `<img src="${imgSrc}" style="max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin:8px 0;" alt="生成的角色图片" onclick="window.open(this.src,'_blank')"><p style="font-size:12px;color:#999;margin-top:8px;">点击图片可查看大图</p>`;
-          resultStatus.textContent = '生成完毕'; resultStatus.className = 'result-status';
-          resultActions.style.display = 'flex';
-        } else {
+        if (!imgSrc) {
           throw new Error('API返回数据中没有找到图片');
         }
+
+        imggenUrl = imgSrc;
+
+        resultContent.innerHTML = `
+          <img src="${imgSrc}" style="max-width:100%;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.1);margin:8px 0;" alt="生成的角色图片" onclick="window.open(this.src,'_blank')">
+          <p style="font-size:12px;color:#999;margin-top:8px;">点击图片可查看大图</p>
+        `;
+
+        resultStatus.textContent = '生成完毕';
+        resultStatus.className = 'result-status';
+        resultActions.style.display = 'flex';
 
       } catch (err) {
         if (err.name === 'AbortError') {
           resultContent.innerHTML = '<div class="empty-state">已停止</div>';
-          resultStatus.textContent = '已停止'; resultStatus.className = 'result-status';
+          resultStatus.textContent = '已停止';
+          resultStatus.className = 'result-status';
         } else {
-          resultStatus.textContent = '出错了'; resultStatus.className = 'result-status';
-          resultContent.innerHTML = `<div style="text-align:left;font-size:14px;color:#c53030;padding:12px;">布豪！生图报错了！<br><br>错误信息：${escapeHtml(err.message)}<br><br>可能的原因：<br>• 生图API地址或密钥不正确<br>• 模型名称有误<br>• 该模型不支持当前图片尺寸<br>• 余额不足<br><br>请检查 API 设置后重试。</div>`;
+          resultStatus.textContent = '出错了';
+          resultStatus.className = 'result-status';
+          resultContent.innerHTML = `
+            <div style="text-align:left;font-size:14px;color:#c53030;padding:12px;">
+              布豪！生图报错了！<br><br>
+              错误信息：${escapeHtml(err.message)}<br><br>
+              可能的原因：<br>
+              • 生图API地址或密钥不正确<br>
+              • 模型名称有误<br>
+              • 该模型不支持当前图片尺寸<br>
+              • 余额不足<br><br>
+              请检查 API 设置后重试。
+            </div>
+          `;
         }
       }
 
-      isGenerating = false; abortController = null;
-      btn.textContent = '🎨 生成图片'; btn.style.background = '';
+      isGenerating = false;
+      abortController = null;
+
+      btn.textContent = '🎨 生成图片';
+      btn.style.background = '';
     }
 
     function downloadImggenResult() {
-      if (!imggenUrl) { showToast('没有可保存的图片'); return; }
+      if (!imggenUrl) {
+        showToast('没有可保存的图片');
+        return;
+      }
+
       if (imggenUrl.startsWith('data:')) {
         const a = document.createElement('a');
         a.href = imggenUrl;
@@ -891,7 +1030,7 @@
         a.click();
       } else {
         window.open(imggenUrl, '_blank');
-        showToast('图片已在新标签页打开，请右键保存');
+        showToast('图片已在新标签页打开，请长按/右键保存');
       }
     }
 loadApi('text');loadApi('img');loadPrompt('text');loadPrompt('img');loadImggenPrompt();renderArchives();renderGeneralTags();
