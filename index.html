@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>U-Create⭐</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; min-height: 100vh; background: #fff; position: relative; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(255,0,0,0.06), rgba(255,154,0,0.06), rgba(255,255,0,0.06), rgba(0,255,0,0.06), rgba(0,191,255,0.06), rgba(100,100,255,0.06), rgba(200,100,255,0.06), rgba(255,0,0,0.06)); background-size: 100% 200%; animation: rainbowFlow 8s linear infinite; pointer-events: none; z-index: 0; }
+    @keyframes rainbowFlow { 0% { background-position: 0% 0%; } 100% { background-position: 0% 200%; } }
+    .app-container { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 24px 20px 40px; }
+    .easter-egg { position: fixed; top: 16px; right: 16px; width: 52px; height: 52px; border-radius: 50%; overflow: hidden; cursor: grab; user-select: none; -webkit-tap-highlight-color: transparent; z-index: 9999; box-shadow: 0 2px 10px rgba(0,0,0,0.15); transition: transform 0.1s; touch-action: none; }
+    .easter-egg:active { cursor: grabbing; }
+    .easter-egg img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .easter-egg.bounce { animation: eggBounce 0.4s ease; }
+    @keyframes eggBounce { 0% { transform: scale(1); } 30% { transform: scale(0.7); } 60% { transform: scale(1.1); } 100% { transform: scale(1); } }
+    .ha-text { position: fixed; font-size: 16px; font-weight: 700; color: #1a1a1a; pointer-events: none; opacity: 1; transition: opacity 0.8s ease; white-space: nowrap; z-index: 9998; }
+    .ha-text.fade { opacity: 0; }
+    .header { text-align: center; padding: 20px 0; }
+    .header-title { font-size: 42px; font-weight: 700; color: #1a2744; }
+    .header-subtitle { margin-top: 6px; font-size: 14px; color: #999; }
+    .header-subtitle .author { color: #666; }
+    .divider { border: none; border-top: 1px solid #e5e5e5; margin: 16px 0 24px; }
+    .menu-btn { display: block; width: 100%; padding: 20px 24px; margin-bottom: 16px; border: 2px solid transparent; border-radius: 16px; background: rgba(255,255,255,0.85); background-clip: padding-box; font-size: 16px; font-weight: 600; color: #1a2744; text-align: left; cursor: pointer; transition: background 0.2s, box-shadow 0.2s, transform 0.15s; -webkit-tap-highlight-color: transparent; position: relative; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .menu-btn::before { content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px; border-radius: 18px; background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb); z-index: -1; opacity: 0.5; }
+    .menu-btn:hover { background: rgba(255,255,255,1); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .menu-btn:active { transform: scale(0.98); }
+    .page { display: none; }
+    .page.active { display: block; }
+    .page-header { display: flex; align-items: center; margin-bottom: 20px; }
+    .back-btn { display: inline-flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.7); border: 1px solid #e0e0e0; border-radius: 20px; font-size: 14px; font-weight: 500; color: #1a2744; cursor: pointer; padding: 6px 16px; margin-right: 12px; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
+    .back-btn:hover { background: rgba(255,255,255,0.9); }
+    .back-btn:active { transform: scale(0.96); }
+    .page-title { font-size: 20px; font-weight: 700; color: #1a2744; }
+    .section-box { border: 1px solid #e8e8e8; border-radius: 14px; background: rgba(255,255,255,0.85); padding: 18px; margin-bottom: 16px; }
+    .section-title { font-size: 16px; font-weight: 600; color: #1a2744; margin-bottom: 14px; }
+    .form-group { margin-bottom: 14px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; color: #333; background: #fff; outline: none; transition: border-color 0.2s; }
+    .form-input:focus { border-color: #5b7fff; }
+    .form-textarea { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; color: #333; background: #fff; outline: none; resize: vertical; min-height: 120px; line-height: 1.6; transition: border-color 0.2s; }
+    .form-textarea:focus { border-color: #5b7fff; }
+    .form-select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; color: #333; background: #fff; outline: none; cursor: pointer; }
+    .form-select:focus { border-color: #5b7fff; }
+    .status-bar { padding: 8px 12px; border-radius: 8px; font-size: 13px; background: #f5f5f5; color: #666; margin-bottom: 14px; }
+    .status-bar.connected { background: #e8f8e8; color: #2a7a2a; }
+    .status-bar.error { background: #fde8e8; color: #c53030; }
+    .status-bar.loading { background: #fff8e8; color: #b07800; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-small { padding: 9px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; font-size: 14px; color: #333; cursor: pointer; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
+    .btn-small:hover { background: #f5f5f5; }
+    .btn-small:active { transform: scale(0.96); }
+    .btn-primary { padding: 9px 16px; border: none; border-radius: 8px; background: #1a2744; font-size: 14px; color: #fff; cursor: pointer; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
+    .btn-primary:hover { background: #2a3a5a; }
+    .btn-primary:active { transform: scale(0.96); }
+    .prompt-hint { font-size: 12px; color: #999; margin-bottom: 10px; }
+    .generate-hint { font-size: 13px; color: #999; text-align: center; margin-bottom: 18px; }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 14px; color: #333; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .checkbox-row input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #1a2744; }
+    .upload-area { border: 1px dashed #ccc; border-radius: 10px; padding: 16px; margin-bottom: 14px; text-align: center; background: #fafafa; display: none; }
+    .upload-area.show { display: block; }
+    .upload-area p { font-size: 13px; color: #888; margin-bottom: 8px; }
+    .upload-area input[type="file"] { font-size: 13px; }
+    .upload-file-name { font-size: 12px; color: #5b7fff; margin-top: 6px; word-break: break-all; }
+    .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+    .category-btn { padding: 14px 12px; border: 1px solid #e8e8e8; border-radius: 10px; background: rgba(255,255,255,0.9); font-size: 14px; font-weight: 500; color: #1a2744; text-align: center; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; -webkit-tap-highlight-color: transparent; }
+    .category-btn:hover { background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .category-btn:active { transform: scale(0.96); }
+    .archive-list { display: flex; flex-direction: column; gap: 12px; }
+    .archive-item { border: 1px solid #e8e8e8; border-radius: 12px; background: rgba(255,255,255,0.9); padding: 14px 16px; }
+    .archive-item-title { font-size: 15px; font-weight: 600; color: #1a2744; margin-bottom: 6px; }
+    .archive-item-preview { font-size: 13px; color: #888; margin-bottom: 10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .archive-item-actions { display: flex; gap: 8px; }
+    .archive-btn { padding: 6px 12px; border: 1px solid #ddd; border-radius: 6px; background: #fff; font-size: 12px; color: #555; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .archive-btn:hover { background: #f5f5f5; }
+    .archive-btn.danger { color: #c53030; border-color: #f5c5c5; }
+    .archive-btn.danger:hover { background: #fff5f5; }
+    .empty-state { text-align: center; padding: 40px 20px; color: #999; font-size: 14px; }
+    .tab-row { display: flex; margin-bottom: 16px; border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: #f8f8f8; font-size: 14px; color: #666; cursor: pointer; transition: background 0.2s; -webkit-tap-highlight-color: transparent; }
+    .tab-btn.active { background: #1a2744; color: #fff; }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: #fff; border-radius: 14px; padding: 24px; max-width: 400px; width: 100%; text-align: center; }
+    .modal-text { font-size: 15px; color: #333; margin-bottom: 20px; line-height: 1.6; white-space: pre-line; }
+    .modal-actions { display: flex; gap: 10px; justify-content: center; }
+    .modal-btn { padding: 9px 20px; border-radius: 8px; font-size: 14px; cursor: pointer; border: 1px solid #ddd; background: #fff; color: #333; -webkit-tap-highlight-color: transparent; }
+    .modal-btn.confirm { background: #c53030; color: #fff; border: none; }
+    .edit-modal-content { text-align: left; }
+    .edit-modal-content .form-textarea { min-height: 200px; margin-bottom: 16px; }
+    .toast { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); background: #1a2744; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; z-index: 200; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+    .tag-section { border: 1px solid #e8e8e8; border-radius: 14px; background: rgba(255,255,255,0.85); margin-bottom: 12px; overflow: hidden; }
+    .tag-section-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .tag-section-header:hover { background: rgba(255,255,255,0.5); }
+    .tag-section-title { font-size: 15px; font-weight: 600; color: #1a2744; }
+    .tag-section-arrow { font-size: 12px; color: #999; transition: transform 0.2s; }
+    .tag-section.open .tag-section-arrow { transform: rotate(180deg); }
+    .tag-section-body { display: none; padding: 0 18px 16px; }
+    .tag-section.open .tag-section-body { display: block; }
+    .tag-section-hint { font-size: 12px; color: #aaa; margin-bottom: 10px; }
+    .tag-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .tag-bubble { display: inline-flex; align-items: center; padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,0.75); border: 1px solid #e0e0e0; font-size: 13px; color: #444; cursor: pointer; user-select: none; transition: all 0.15s; -webkit-tap-highlight-color: transparent; }
+    .tag-bubble:hover { background: rgba(255,255,255,0.95); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+    .tag-bubble:active { transform: scale(0.95); }
+    .tag-bubble.selected { background: rgba(26,39,68,0.1); border-color: #1a2744; color: #1a2744; font-weight: 500; }
+    .tag-bubble.liked { background: rgba(46,160,67,0.12); border-color: #2ea043; color: #1a7f37; font-weight: 500; }
+    .tag-bubble.disliked { background: rgba(197,48,48,0.1); border-color: #c53030; color: #c53030; font-weight: 500; }
+    .tag-add-row { display: flex; gap: 6px; margin-top: 8px; }
+    .tag-add-input { flex: 1; padding: 6px 12px; border: 1px solid #ddd; border-radius: 16px; font-size: 13px; outline: none; background: #fff; }
+    .tag-add-input:focus { border-color: #5b7fff; }
+    .tag-add-btn { padding: 6px 12px; border: 1px solid #ddd; border-radius: 16px; background: #fff; font-size: 13px; color: #1a2744; cursor: pointer; white-space: nowrap; }
+    .tag-add-btn:hover { background: #f5f5f5; }
+    .tag-subsection-title { font-size: 13px; font-weight: 600; color: #555; margin: 12px 0 8px; padding-top: 8px; border-top: 1px dashed #eee; }
+    .tag-subsection-title:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+    .summary-box { border: 2px solid #1a2744; border-radius: 14px; background: rgba(255,255,255,0.9); padding: 18px; margin-top: 20px; margin-bottom: 16px; }
+    .summary-title { font-size: 16px; font-weight: 700; color: #1a2744; margin-bottom: 12px; }
+    .summary-content { font-size: 13px; color: #444; line-height: 1.8; min-height: 40px; white-space: pre-wrap; word-break: break-all; }
+    .summary-empty { color: #bbb; font-style: italic; }
+    .word-count-row { display: flex; align-items: center; gap: 10px; margin-top: 16px; }
+    .word-count-label { font-size: 14px; font-weight: 600; color: #1a2744; white-space: nowrap; }
+    .word-count-input { width: 100px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; text-align: center; }
+    .word-count-input:focus { border-color: #5b7fff; }
+    .word-count-hint { font-size: 12px; color: #999; }
+    .generate-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-generate { flex: 1; padding: 14px; border: none; border-radius: 12px; background: linear-gradient(135deg, #1a2744, #2a4a7a); font-size: 16px; font-weight: 600; color: #fff; cursor: pointer; transition: transform 0.15s, box-shadow 0.2s; -webkit-tap-highlight-color: transparent; }
+    .btn-generate:hover { box-shadow: 0 4px 16px rgba(26,39,68,0.3); }
+    .btn-generate:active { transform: scale(0.97); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; }
+    .name-row { display: flex; gap: 8px; align-items: center; }
+    .name-row .form-input { flex: 1; }
+    .name-random-btn { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; background: #fff; font-size: 13px; color: #1a2744; cursor: pointer; white-space: nowrap; }
+    .name-random-btn:hover { background: #f5f5f5; }
+    .result-box { border: 1px solid #e8e8e8; border-radius: 14px; background: rgba(255,255,255,0.9); padding: 18px; margin-top: 16px; display: none; }
+    .result-box.show { display: block; }
+    .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .result-title { font-size: 16px; font-weight: 700; color: #1a2744; }
+    .result-status { font-size: 12px; color: #999; }
+    .result-status.generating { color: #b07800; }
+    .result-content { font-size: 14px; color: #333; line-height: 1.8; white-space: pre-wrap; word-break: break-all; min-height: 60px; max-height: 500px; overflow-y: auto; }
+    .result-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .result-actions .btn-small { flex: 1; text-align: center; min-width: 80px; }
+    @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+    .cursor-blink::after { content: '▌'; animation: blink 0.8s infinite; color: #1a2744; }
+    @media (max-width: 480px) { .app-container { padding: 16px 14px 30px; } .header-title { font-size: 36px; } .category-grid { grid-template-columns: 1fr 1fr; gap: 8px; } .tag-bubble { padding: 5px 11px; font-size: 12px; } }
+  </style>
+</head>
+<body>
+  <div class="easter-egg" id="easter-egg" role="button" aria-label="彩蛋" tabindex="0"><img src="https://i.postimg.cc/Gm2QVw3X/img-1179016377-1771318998086.jpg" alt="猫猫"></div>
+  <div class="app-container">
+    <div class="page active" id="page-main">
+      <div class="header"><div class="header-title">U-Create⭐</div><div class="header-subtitle">user人设生成器&emsp;&emsp;&emsp;by <span class="author">bxmsQAQ</span></div></div>
+      <hr class="divider">
+      <button class="menu-btn" onclick="navigateTo('page-api')">🔌 API设置</button>
+      <button class="menu-btn" onclick="navigateTo('page-prompt')">📝 提示词（Prompt）设置</button>
+      <button class="menu-btn" onclick="navigateTo('page-generate')">🚀 人设生成，启动！</button>
+      <button class="menu-btn" onclick="navigateTo('page-archive')">📁 存档区</button>
+    </div>
+    <div class="page" id="page-api">
+      <div class="page-header"><button class="back-btn" onclick="navigateTo('page-main')">返回</button><div class="page-title">API设置</div></div>
+      <div class="section-box"><div class="section-title">📖 文字API</div><div class="form-group"><label class="form-label">接口地址（Base URL）</label><input class="form-input" type="text" id="text-api-url" placeholder="https://api.example.com/v1"></div><div class="form-group"><label class="form-label">API Key（密钥）</label><input class="form-input" type="password" id="text-api-key" placeholder="sk-..."></div><div class="form-group"><label class="form-label">模型</label><input class="form-input" type="text" id="text-api-model-input" placeholder="手动输入模型名称"><select class="form-select" id="text-api-model-select" style="margin-top:8px;"><option value="">-- 或从拉取列表中选择 --</option></select></div><div class="status-bar" id="text-api-status">未连接</div><div class="btn-row"><button class="btn-small" onclick="pullModels('text')">拉取</button><button class="btn-small" onclick="testApi('text')">测试</button><button class="btn-primary" onclick="saveApi('text')">保存设置</button></div></div>
+      <div class="section-box"><div class="section-title">🎨 生图API</div><div class="form-group"><label class="form-label">接口地址（Base URL）</label><input class="form-input" type="text" id="img-api-url" placeholder="https://api.example.com/v1"></div><div class="form-group"><label class="form-label">API Key（密钥）</label><input class="form-input" type="password" id="img-api-key" placeholder="sk-..."></div><div class="form-group"><label class="form-label">模型</label><input class="form-input" type="text" id="img-api-model-input" placeholder="手动输入模型名称"><select class="form-select" id="img-api-model-select" style="margin-top:8px;"><option value="">-- 或从拉取列表中选择 --</option></select></div><div class="status-bar" id="img-api-status">未连接</div><div class="btn-row"><button class="btn-small" onclick="pullModels('img')">拉取</button><button class="btn-small" onclick="testApi('img')">测试</button><button class="btn-primary" onclick="saveApi('img')">保存设置</button></div></div>
+    </div>
+    <div class="page" id="page-prompt">
+      <div class="page-header"><button class="back-btn" onclick="navigateTo('page-main')">返回</button><div class="page-title">提示词（Prompt）设置</div></div>
+      <div class="section-box"><div class="section-title">📖 文字提示词</div><p class="prompt-hint">可自行修改提示词口牙ᯇ⩊ᯇ</p><div class="form-group"><textarea class="form-textarea" id="text-prompt">You are a creative writing assistant specializing in character creation for roleplay. Based on the user's selected tags and preferences, generate a detailed and immersive user persona/character sheet. Include: name, age, appearance, personality (both surface and hidden), background story, speaking style, strengths, weaknesses, goals, secrets, and relationship dynamics. Write in a vivid, engaging style. Output in Chinese. Format with clear section headers using【】brackets.</textarea></div><button class="btn-primary" onclick="savePrompt('text')">保存</button></div>
+      <div class="section-box"><div class="section-title">🎨 生图提示词</div><p class="prompt-hint">可自行修改提示词口牙ᯇ⩊ᯇ</p><div class="form-group"><textarea class="form-textarea" id="img-prompt">Generate a character portrait based on the following description. Style: anime/semi-realistic illustration, high quality, detailed features, expressive eyes, clean linework. Focus on the character's face and upper body. Include appropriate clothing and accessories that match their setting and personality. Soft lighting, visually appealing color palette.</textarea></div><button class="btn-primary" onclick="savePrompt('img')">保存</button></div>
+    </div>
+    <div class="page" id="page-generate">
+      <div class="page-header"><button class="back-btn" onclick="navigateTo('page-main')">返回</button><div class="page-title">人设生成，启动！</div></div>
+      <div class="generate-hint">小u疯狂长出血肉ing…</div>
+      <div class="category-grid">
+        <button class="category-btn" onclick="navigateTo('page-cat-general')">🌐 通用人设</button>
+        <button class="category-btn" onclick="navigateTo('page-cat-ancient')">🏯 古风人设</button>
+        <button class="category-btn" onclick="navigateTo('page-cat-fantasy')">⚔️ 西幻人设</button>
+        <button class="category-btn" onclick="navigateTo('page-cat-polish')">✨ 现有人设润色</button>
+      </div>
+    </div>
+     <div class="page" id="page-cat-general">
+      <div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">🌐 通用人设</div></div>
+      <div class="section-box">
+        <label class="checkbox-row"><input type="checkbox" id="check-char-general" onchange="toggleUpload('char-general')">关联到角色卡</label>
+        <div class="upload-area" id="upload-char-general"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-general" onchange="handleFileSelect('char-general')"><div class="upload-file-name" id="file-char-general-name"></div></div>
+        <label class="checkbox-row"><input type="checkbox" id="check-world-general" onchange="toggleUpload('world-general')">关联到世界书</label>
+        <div class="upload-area" id="upload-world-general"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-general" onchange="handleFileSelect('world-general')"><div class="upload-file-name" id="file-world-general-name"></div></div>
+      </div>
+      <div id="general-tags-container"></div>
+      <div class="summary-box"><div class="summary-title">⭐ 已选标签汇总</div><div class="summary-content" id="general-summary"><span class="summary-empty">还没有选择任何标签…</span></div></div>
+      <div class="word-count-row"><span class="word-count-label">✨ 目标字数</span><input class="word-count-input" type="number" id="general-word-count" value="1000" min="200" max="10000" step="100"><span class="word-count-hint">字</span></div>
+      <div class="generate-actions"><button class="btn-generate" id="btn-gen-general" onclick="doGenerate('general')">🚀 生成人设</button></div>
+      <div class="result-box" id="general-result-box"><div class="result-header"><span class="result-title">📄 生成结果</span><span class="result-status" id="general-result-status"></span></div><div class="result-content" id="general-result-content"></div><div class="result-actions" id="general-result-actions" style="display:none;"><button class="btn-small" onclick="copyResult('general')">📋 复制</button><button class="btn-small" onclick="saveToArchive('general')">💾 存档</button><button class="btn-small" onclick="doGenerate('general')">🔄 重新生成</button></div></div>
+    </div>
+    <div class="page" id="page-cat-ancient"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">🏯 古风人设</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-ancient" onchange="toggleUpload('char-ancient')">关联到角色卡</label><div class="upload-area" id="upload-char-ancient"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-ancient" onchange="handleFileSelect('char-ancient')"><div class="upload-file-name" id="file-char-ancient-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-ancient" onchange="toggleUpload('world-ancient')">关联到世界书</label><div class="upload-area" id="upload-world-ancient"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-ancient" onchange="handleFileSelect('world-ancient')"><div class="upload-file-name" id="file-world-ancient-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
+    <div class="page" id="page-cat-fantasy"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">⚔️ 西幻人设</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-fantasy" onchange="toggleUpload('char-fantasy')">关联到角色卡</label><div class="upload-area" id="upload-char-fantasy"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-fantasy" onchange="handleFileSelect('char-fantasy')"><div class="upload-file-name" id="file-char-fantasy-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-fantasy" onchange="toggleUpload('world-fantasy')">关联到世界书</label><div class="upload-area" id="upload-world-fantasy"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-fantasy" onchange="handleFileSelect('world-fantasy')"><div class="upload-file-name" id="file-world-fantasy-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
+    <div class="page" id="page-cat-polish"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">✨ 现有人设润色</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-polish" onchange="toggleUpload('char-polish')">关联到角色卡</label><div class="upload-area" id="upload-char-polish"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-polish" onchange="handleFileSelect('char-polish')"><div class="upload-file-name" id="file-char-polish-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-polish" onchange="toggleUpload('world-polish')">关联到世界书</label><div class="upload-area" id="upload-world-polish"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-polish" onchange="handleFileSelect('world-polish')"><div class="upload-file-name" id="file-world-polish-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
+    <div class="page" id="page-archive"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-main')">返回</button><div class="page-title">存档区</div></div><div class="tab-row"><button class="tab-btn active" id="tab-archive" onclick="switchArchiveTab('archive')">存档</button><button class="tab-btn" id="tab-trash" onclick="switchArchiveTab('trash')">回收站</button></div><div id="archive-list" class="archive-list"></div><div id="trash-list" class="archive-list" style="display:none;"></div></div>
+  </div>
+  <div class="modal-overlay" id="modal"><div class="modal-box"><div class="modal-text" id="modal-text"></div><div class="modal-actions" id="modal-actions"></div></div></div>
+  <div class="modal-overlay" id="edit-modal"><div class="modal-box"><div class="edit-modal-content"><div class="form-group"><label class="form-label">标题</label><input class="form-input" type="text" id="edit-title"></div><div class="form-group"><label class="form-label">内容</label><textarea class="form-textarea" id="edit-content"></textarea></div><div class="btn-row" style="justify-content:flex-end;"><button class="btn-small" onclick="closeEditModal()">取消</button><button class="btn-primary" id="edit-save-btn">保存</button></div></div></div></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    function navigateTo(pageId) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(pageId).classList.add('active'); window.scrollTo(0,0); }
+
+    // Easter Egg
+    const easterEgg = document.getElementById('easter-egg');
+    let isDragging=false, dragStartX, dragStartY, eggStartX, eggStartY, hasMoved=false;
+    function getPointerPos(e) { if(e.touches) return {x:e.touches[0].clientX,y:e.touches[0].clientY}; return {x:e.clientX,y:e.clientY}; }
+    function onDragStart(e) { isDragging=true; hasMoved=false; const pos=getPointerPos(e); dragStartX=pos.x; dragStartY=pos.y; const rect=easterEgg.getBoundingClientRect(); eggStartX=rect.left; eggStartY=rect.top; easterEgg.style.transition='none'; }
+    function onDragMove(e) { if(!isDragging) return; const pos=getPointerPos(e); const dx=pos.x-dragStartX, dy=pos.y-dragStartY; if(Math.abs(dx)>5||Math.abs(dy)>5) hasMoved=true; let newX=Math.max(0,Math.min(eggStartX+dx,window.innerWidth-52)); let newY=Math.max(0,Math.min(eggStartY+dy,window.innerHeight-52)); easterEgg.style.left=newX+'px'; easterEgg.style.top=newY+'px'; easterEgg.style.right='auto'; }
+    function onDragEnd() { if(!isDragging) return; isDragging=false; easterEgg.style.transition='transform 0.1s'; if(!hasMoved) doEggClick(); }
+    easterEgg.addEventListener('mousedown', onDragStart); document.addEventListener('mousemove', onDragMove); document.addEventListener('mouseup', onDragEnd);
+    easterEgg.addEventListener('touchstart', onDragStart, {passive:true}); document.addEventListener('touchmove', onDragMove, {passive:true}); document.addEventListener('touchend', onDragEnd);
+    function doEggClick() { easterEgg.classList.remove('bounce'); void easterEgg.offsetWidth; easterEgg.classList.add('bounce'); const ha=document.createElement('div'); ha.className='ha-text'; ha.textContent='哈！'; document.body.appendChild(ha); const r=easterEgg.getBoundingClientRect(); const cx=r.left+r.width/2, cy=r.top+r.height/2; ha.style.left=cx+'px'; ha.style.top=cy+'px'; const angle=Math.random()*Math.PI*2, dist=80+Math.random()*40, dx=Math.cos(angle)*dist, dy=Math.sin(angle)*dist; let p=0; function anim(){p+=0.016;if(p>=1){ha.classList.add('fade');setTimeout(()=>ha.remove(),800);return;}ha.style.left=(cx+dx*p)+'px';ha.style.top=(cy+dy*p)+'px';requestAnimationFrame(anim);}requestAnimationFrame(anim); }
+    easterEgg.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();doEggClick();}});
+    easterEgg.addEventListener('contextmenu',e=>e.preventDefault());
+
+    function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+
+    // API
+     function getApiElements(type){const p=type==='text'?'text-api':'img-api';return{url:document.getElementById(p+'-url'),key:document.getElementById(p+'-key'),modelInput:document.getElementById(p+'-model-input'),modelSelect:document.getElementById(p+'-model-select'),status:document.getElementById(p+'-status')};}
+    function setStatus(el,text,type){el.textContent=text;el.className='status-bar';if(type)el.classList.add(type);}
+    async function pullModels(type){const els=getApiElements(type);const url=els.url.value.trim(),key=els.key.value.trim();if(!url){setStatus(els.status,'接口地址为空！','error');return;}if(!key){setStatus(els.status,'密钥为空！','error');return;}setStatus(els.status,'拉取中…','loading');try{const res=await fetch(url.replace(/\/+$/,'')+'/models',{headers:{'Authorization':'Bearer '+key}});if(!res.ok)throw new Error('HTTP '+res.status);const data=await res.json();const models=data.data||data.models||[];els.modelSelect.innerHTML='<option value="">-- 从列表中选择 --</option>';models.forEach(m=>{const o=document.createElement('option');o.value=m.id||m.name||m;o.textContent=m.id||m.name||m;els.modelSelect.appendChild(o);});setStatus(els.status,'拉取成功！共 '+models.length+' 个模型','connected');}catch(err){setStatus(els.status,'布豪！报错了！'+err.message,'error');}}
+    async function testApi(type){const els=getApiElements(type);const url=els.url.value.trim(),key=els.key.value.trim(),model=els.modelInput.value.trim()||els.modelSelect.value;if(!url){setStatus(els.status,'接口地址为空！','error');return;}if(!key){setStatus(els.status,'密钥为空！','error');return;}setStatus(els.status,'测试中…','loading');try{const baseUrl=url.replace(/\/+$/,'');if(type==='text'){const res=await fetch(baseUrl+'/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:model||'gpt-3.5-turbo',messages:[{role:'user',content:'Hi, reply OK.'}],max_tokens:10})});if(!res.ok)throw new Error('HTTP '+res.status);}else{const res=await fetch(baseUrl+'/images/generations',{method:'POST',headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},body:JSON.stringify({model:model||'dall-e-3',prompt:'A white cat',n:1,size:'256x256'})});if(!res.ok)throw new Error('HTTP '+res.status);}setStatus(els.status,'已连接','connected');}catch(err){setStatus(els.status,'布豪！报错了！'+err.message,'error');}}
+    function saveApi(type){const els=getApiElements(type);localStorage.setItem('ucreate_api_'+type,JSON.stringify({url:els.url.value.trim(),key:els.key.value.trim(),modelInput:els.modelInput.value.trim(),modelSelect:els.modelSelect.value}));showToast('保存成功！');}
+    function loadApi(type){const s=localStorage.getItem('ucreate_api_'+type);if(!s)return;const d=JSON.parse(s),els=getApiElements(type);els.url.value=d.url||'';els.key.value=d.key||'';els.modelInput.value=d.modelInput||'';}
+    function savePrompt(type){localStorage.setItem('ucreate_prompt_'+type,document.getElementById(type+'-prompt').value);showToast('保存成功！');}
+    function loadPrompt(type){const s=localStorage.getItem('ucreate_prompt_'+type);if(s)document.getElementById(type+'-prompt').value=s;}
+    function toggleUpload(type){document.getElementById('upload-'+type).classList.toggle('show',document.getElementById('check-'+type).checked);}
+    function handleFileSelect(type){const i=document.getElementById('file-'+type);document.getElementById('file-'+type+'-name').textContent=i.files.length>0?'已选择: '+i.files[0].name:'';}
+
+    // Archive
+    function getArchives(){return JSON.parse(localStorage.getItem('ucreate_archives')||'[]');}
+    function saveArchives(a){localStorage.setItem('ucreate_archives',JSON.stringify(a));}
+    function getTrash(){return JSON.parse(localStorage.getItem('ucreate_trash')||'[]');}
+    function saveTrash(t){localStorage.setItem('ucreate_trash',JSON.stringify(t));}
+    function renderArchives(){const a=getArchives(),c=document.getElementById('archive-list');if(!a.length){c.innerHTML='<div class="empty-state">还没有存档哦</div>';return;}c.innerHTML=a.map((item,i)=>`<div class="archive-item"><div class="archive-item-title">${escapeHtml(item.title)}</div><div class="archive-item-preview">${escapeHtml(item.content)}</div><div class="archive-item-actions"><button class="archive-btn" onclick="copyArchive(${i})">复制</button><button class="archive-btn" onclick="editArchive(${i})">修改</button><button class="archive-btn danger" onclick="deleteArchive(${i})">删除</button></div></div>`).join('');}
+    function renderTrash(){const t=getTrash(),c=document.getElementById('trash-list');if(!t.length){c.innerHTML='<div class="empty-state">回收站空空如也</div>';return;}c.innerHTML=t.map((item,i)=>`<div class="archive-item"><div class="archive-item-title">${escapeHtml(item.title)}</div><div class="archive-item-preview">${escapeHtml(item.content)}</div><div class="archive-item-actions"><button class="archive-btn" onclick="restoreFromTrash(${i})">恢复</button><button class="archive-btn danger" onclick="permanentDelete(${i})">彻底删除</button></div></div>`).join('');}
+    function copyArchive(i){navigator.clipboard.writeText(getArchives()[i].content).then(()=>showToast('已复制！')).catch(()=>showToast('复制失败'));}
+    let editingIndex=-1;
+    function editArchive(i){const a=getArchives();editingIndex=i;document.getElementById('edit-title').value=a[i].title;document.getElementById('edit-content').value=a[i].content;document.getElementById('edit-modal').classList.add('show');}
+    function closeEditModal(){document.getElementById('edit-modal').classList.remove('show');editingIndex=-1;}
+    document.getElementById('edit-save-btn').addEventListener('click',()=>{if(editingIndex<0)return;const a=getArchives();a[editingIndex].title=document.getElementById('edit-title').value.trim()||'未命名';a[editingIndex].content=document.getElementById('edit-content').value;saveArchives(a);renderArchives();closeEditModal();showToast('已保存！');});
+    function deleteArchive(i){showModal('确定要删除这个存档吗？\n（将移入回收站）',[{text:'取消',action:closeModal},{text:'删除',danger:true,action:()=>{const a=getArchives(),t=getTrash();t.push(a[i]);a.splice(i,1);saveArchives(a);saveTrash(t);renderArchives();closeModal();showToast('已移入回收站');}}]);}
+    function restoreFromTrash(i){const t=getTrash(),a=getArchives();a.push(t[i]);t.splice(i,1);saveArchives(a);saveTrash(t);renderArchives();renderTrash();showToast('已恢复');}
+    function permanentDelete(i){showModal('确定要彻底删除吗？\n此操作不可恢复！',[{text:'取消',action:closeModal},{text:'彻底删除',danger:true,action:()=>{const t=getTrash();t.splice(i,1);saveTrash(t);renderTrash();closeModal();showToast('已彻底删除');}}]);}
+    function switchArchiveTab(tab){document.getElementById('tab-archive').classList.toggle('active',tab==='archive');document.getElementById('tab-trash').classList.toggle('active',tab==='trash');document.getElementById('archive-list').style.display=tab==='archive'?'flex':'none';document.getElementById('trash-list').style.display=tab==='trash'?'flex':'none';if(tab==='trash')renderTrash();}
+    function showModal(text,buttons){document.getElementById('modal-text').textContent=text;const a=document.getElementById('modal-actions');a.innerHTML='';buttons.forEach(b=>{const el=document.createElement('button');el.className='modal-btn'+(b.danger?' confirm':'');el.textContent=b.text;el.onclick=b.action;a.appendChild(el);});document.getElementById('modal').classList.add('show');}
+    function closeModal(){document.getElementById('modal').classList.remove('show');}
+    function escapeHtml(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+
+    // ===== API Calling =====
+    let isGenerating=false, abortController=null;
+    function getApiConfig(type){const s=localStorage.getItem('ucreate_api_'+type);if(!s)return null;const d=JSON.parse(s);return{url:d.url,key:d.key,model:d.modelInput||d.modelSelect||''};}
+    async function doGenerate(category){
+      if(isGenerating){if(abortController)abortController.abort();isGenerating=false;const btn=document.getElementById('btn-gen-'+category);btn.textContent='🚀 生成人设';btn.style.background='';return;}
+      const summaryEl=document.getElementById(category+'-summary');const summaryText=summaryEl.textContent;
+      if(!summaryText||summaryText==='还没有选择任何标签…'){showToast('请先选择一些标签！');return;}
+      const apiConfig=getApiConfig('text');
+      if(!apiConfig||!apiConfig.url||!apiConfig.key){showToast('请先在 API设置 中配置文字API！');return;}
+      const wordCount=document.getElementById(category+'-word-count')?.value||1000;
+      const systemPrompt=localStorage.getItem('ucreate_prompt_text')||document.getElementById('text-prompt').value;
+      const userMessage=`请根据以下用户选择的标签和设定，生成一份完整的角色人设。目标字数约${wordCount}字。\n\n用户选择的标签和信息如下：\n${summaryText}\n\n请基于以上信息，生成一份详细、生动、有层次感的角色人设。`;
+      isGenerating=true;abortController=new AbortController();
+      const btn=document.getElementById('btn-gen-'+category);btn.textContent='⏹ 停止生成';btn.style.background='#c53030';
+      const resultBox=document.getElementById(category+'-result-box'),resultContent=document.getElementById(category+'-result-content'),resultStatus=document.getElementById(category+'-result-status'),resultActions=document.getElementById(category+'-result-actions');
+      resultBox.classList.add('show');resultContent.textContent='';resultContent.classList.add('cursor-blink');resultStatus.textContent='生成中…';resultStatus.className='result-status generating';resultActions.style.display='none';
+      setTimeout(()=>resultBox.scrollIntoView({behavior:'smooth',block:'start'}),100);
+      try{
+        const res=await fetch(apiConfig.url.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiConfig.key,'Content-Type':'application/json'},body:JSON.stringify({model:apiConfig.model||'gpt-3.5-turbo',messages:[{role:'system',content:systemPrompt},{role:'user',content:userMessage}],stream:true,max_tokens:Math.max(2000,Math.round(wordCount*2))}),signal:abortController.signal});
+        if(!res.ok)throw new Error('HTTP '+res.status+': '+(await res.text()).slice(0,200));
+        const reader=res.body.getReader(),decoder=new TextDecoder();let fullText='',buffer='';
+        while(true){const{done,value}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const lines=buffer.split('\n');buffer=lines.pop()||'';
+          for(const line of lines){const trimmed=line.trim();if(!trimmed||trimmed==='data: [DONE]')continue;if(!trimmed.startsWith('data: '))continue;try{const json=JSON.parse(trimmed.slice(6));const delta=json.choices?.[0]?.delta?.content;if(delta){fullText+=delta;resultContent.textContent=fullText;resultContent.scrollTop=resultContent.scrollHeight;}}catch(e){}}}
+        resultContent.classList.remove('cursor-blink');resultStatus.textContent=`生成完毕（约${fullText.length}字）`;resultStatus.className='result-status';resultActions.style.display='flex';
+      }catch(err){resultContent.classList.remove('cursor-blink');if(err.name==='AbortError'){resultStatus.textContent='已停止';resultStatus.className='result-status';if(resultContent.textContent.length>0)resultActions.style.display='flex';}else{resultStatus.textContent='出错了';resultStatus.className='result-status';resultContent.textContent='布豪！生成报错了！\n\n错误信息：'+err.message+'\n\n请检查 API 设置后重试。';}}
+      isGenerating=false;abortController=null;btn.textContent='🚀 生成人设';btn.style.background='';
+    }
+    function copyResult(category){navigator.clipboard.writeText(document.getElementById(category+'-result-content').textContent).then(()=>showToast('已复制！')).catch(()=>showToast('复制失败'));}
+    function saveToArchive(category){const text=document.getElementById(category+'-result-content').textContent;if(!text||text.startsWith('布豪！')){showToast('没有可保存的内容');return;}const title=(text.split('\n').find(l=>l.trim())||'未命名人设').replace(/^【.*?】/,'').slice(0,30)||'未命名人设';const archives=getArchives();archives.unshift({title,content:text,time:new Date().toLocaleString('zh-CN')});saveArchives(archives);renderArchives();showToast('已保存到存档区！');}
+
+    // ===== FULL TAG DATA =====
+     const generalSections = [
+      {id:'basic-info',title:'1. 基础信息',type:'custom'},
+      {id:'char-relation',title:'2. 你好👋，char！',type:'custom'},
+      {id:'era',title:'3. 时代背景',hint:'单选',type:'single',tags:['跟随世界书','现代社会都市','近代乡村','中世纪欧洲奇幻世界','蒸汽朋克维多利亚时代','赛博朋克未来都市','魔法学院纪元','剑与魔法的大陆','龙与地下城设定','末日废土','星际航行时代','克苏鲁神话1920年代','东方玄幻修仙界','江湖武侠架空朝代','山海经神话时代','希腊神话英雄时代','北欧神话九界','埃及神话法老王朝','亚特兰蒂斯沉没前','恐龙时代','哈利波特式魔法世界','爱丽丝梦游仙境式奇境','绿野仙踪奥兹国','小王子星球旅行','宫崎骏式奇幻森林','最终幻想式水晶世界','魔兽世界艾泽拉斯','指环王中土世界','永恒之塔天界魔界','上古卷轴泰姆瑞尔','巫师大陆','黑暗之魂传火时代','血源诅咒哥特式噩梦','恶魔城德古拉城堡','阴阳师百鬼夜行平安京','西游记取经路','封神演义商周之战','聊斋志异鬼狐世界','克苏鲁现代都市','超能力学院都市','反乌托邦极权未来','无限流副本','时间旅行者纷乱纪元','平行宇宙地球','虚拟现实游戏世界','梦境领域','神话降临现实（现代诸神）','龙族现代隐世','妖怪公寓日常','星际牛仔赏金猎人行','银河帝国衰亡史','沙丘沙漠星球']},
+      {id:'family-bg',title:'4. 原生家庭/身份背景',hint:'可多选',type:'multi',tags:['普通家庭','孤儿','单亲家庭','大家族庶子','豪门继承人','王室私生子','贵族次子','没落贵族','富商子女','农民子弟','牧民后代','猎户之女','铁匠之子','屠户家庭','裁缝家孩子','船夫之子','戏班出身','书香门第','武将世家','医学世家','魔法世家','修仙门派弟子','道士后人','巫师血统','吸血鬼后裔','狼人家族','精灵混血','矮人后裔','兽人部落之子','龙族血脉','神族后裔','恶魔契约家族','被诅咒的血脉','灵媒家庭','黑道世家','杀手组织培养的孤儿','间谍子女','实验体人造人','克隆人','机器人养子','外星遗孤','星际难民','平行世界穿越者','时间旅行者后裔','前朝遗民','被流放的皇族','起义军后代','奴隶出身','角斗士之女']},
+      {id:'appearance',title:'5. 外貌气质',hint:'可多选',type:'multi',tags:['眉清目秀','面容端正','气质温润','身姿挺拔','目光澄澈','笑容温和','举止得体','神态安然','肤质细腻','发质柔亮','手形匀称','声音清朗','步态稳健','气场纯净','神情恬淡','仪态大方','风姿清雅','气度不凡','恬静自然','朴素洁净','利落干脆','阳光健康','眼神明亮','轮廓清晰','体态匀称','动作优雅','风度优雅','落落大方','温文尔雅','含蓄内敛','清新自然','端庄得体','洒脱不羁','温和亲切','坚毅沉稳','灵动聪慧','沉稳持重','睿智淡然','天真纯粹','冷峻清正','朴实憨厚','精明强干','慵懒惬意','矜持优雅','豪爽直率','腼腆羞涩','热情爽朗','沉静如水','斯文秀雅','端庄素雅']},
+      {id:'hair-color',title:'6. 发色',hint:'单选',type:'single',tags:['自然黑','炭黑','乌黑','深棕','巧克力棕','栗棕色','红棕','金棕色','亚麻色','浅亚麻','蜂蜜色','小麦色','香槟金','铂金白','银灰','烟灰色','铁灰色','雪白色','米白','浅金色','铜金色','琥珀色','焦糖色','咖啡色','深褐','浅褐','赤褐','赭石色','红铜色','酒红色','玫瑰金','粉金','淡粉色','薰衣草紫','浅紫色','淡蓝','雾霾蓝','薄荷绿','浅绿','珍珠白','象牙白','奶油色','沙金色','麦黄色','姜黄色','蜜糖色','乌檀色','墨蓝','星空黑','柔光黑']},
+      {id:'hairstyle',title:'7. 发型',hint:'可多选',type:'multi',tags:['齐耳短发','及肩中发','长发及腰','微卷长发','直顺披肩发','自然蓬松短发','侧分刘海','齐眉刘海','无刘海露额','高马尾','低马尾','双马尾','单侧麻花辫','双侧麻花辫','法式编发','盘发髻','半扎发','丸子头','波波头','锁骨发','狼尾剪','碎发层次','柔顺贴耳','蓬松微翘','后梳背头','偏分短发','中分长发','羊毛卷','水波纹卷','蛋卷头','空气刘海','八字刘海','龙须刘海','湿发造型','复古手推波纹','燕尾发','公主切','挂耳短发','纹理烫','自然微湿感','光洁束发','松散发辫','环形编发','不对称刘海','层次感短发','及臀长发','卷翘发尾','顺滑黑长直','棕色调柔发','轻盈碎刘海']},
+      {id:'eye-color',title:'8. 瞳色',hint:'单选',type:'single',tags:['自然黑','深棕','浅棕','琥珀色','蜜糖色','焦糖色','金褐色','榛子色','橄榄绿','草绿色','翠绿色','碧绿色','灰绿色','浅绿色','蓝绿色','松石绿','天蓝色','湖水蓝','湛蓝色','钢蓝色','灰蓝色','浅蓝色','靛蓝色','深蓝色','蓝紫色','灰紫色','浅紫色','薰衣草紫','紫罗兰色','玫瑰色','香槟色','琥珀金','黄玉色','金色','蜜棕色','茶色','烟灰色','银灰色','霜白色','珠光色','月白色','琉璃色','星辰色','墨蓝色','黛蓝色','鸦青色','铁灰色','柔褐色','浅褐','乌金色']},
+      {id:'clothing-style',title:'9. 衣着风格',hint:'可多选',type:'multi',tags:['简约休闲','日系清新','韩式时髦','法式优雅','英伦绅士','美式复古','北欧极简','波西米亚','朋克摇滚','哥特暗黑','街头嘻哈','运动活力','商务正装','商务休闲','学院风','田园风','民族风','军旅风','工装风','机车风','牛仔风','慵懒风','性冷淡风','高街风','老钱风','新中式','未来感机能风','赛博朋克','浪漫柔美','干练知性']},
+      {id:'personality',title:'10. 性格特征',hint:'可多选',type:'multi',tags:['外向开朗','内向沉静','乐观积极','悲观消极','幽默风趣','严肃刻板','温柔体贴','暴躁易怒','细腻敏感','粗枝大叶','自信满满','自卑怯懦','勇敢果断','胆小怕事','慷慨大方','吝啬小气','诚实守信','虚伪狡猾','谦虚低调','傲慢自负','耐心十足','急躁冒进','勤奋努力','懒惰散漫','认真严谨','马虎随便','负责可靠','敷衍了事','独立自主','依赖黏人','冷静理智','冲动感性','好奇爱学','冷漠麻木','热情似火','孤僻寡言','合群友善','多疑猜忌','单纯天真','世故圆滑','果断决绝','优柔寡断','随和好说话','固执倔强','善解人意','自私自利','有主见','没主见','心直口快','口蜜腹剑','玻璃心','厚脸皮','戏精','沙雕','中二病','傲娇','病娇','腹黑','天然呆','老好人','工作狂','恋爱脑','圣母心','强迫症','选择困难','拖延症晚期','社恐','社牛','凡尔赛','柠檬精','杠精','猫奴','细节控','完美主义','随遇而安','控制欲强','神经大条']},
+      {id:'residence',title:'11. 住所',type:'multi-sub',subs:[
+        {title:'住所类型（单选）',type:'single',tags:['独立别墅','联排别墅','复式公寓','高层公寓','花园洋房','山顶豪宅','湖畔木屋','海滨别墅','林中树屋','地下洞穴居','悬崖石屋','漂浮船屋','塔楼套房','城堡宅邸','庄园府第','四合院','古典园林宅院','摩天顶楼','太空站舱室','星际飞船船舱','浮空岛云居','魔法塔房间','异界传送门宅','精灵树城屋','矮人岩厅居','龙背移动堡','时间宅邸','梦境庄园','半位面居所','镜中公馆']},
+        {title:'装修风格（单选）',type:'single',tags:['现代极简','北欧清新','日式原木','侘寂禅意','新中式典雅','轻法式复古','意式轻奢','美式田园','工业粗犷','复古工业','波西米亚混搭','地中海蓝白','东南亚度假','摩洛哥风情','装饰艺术（Art Deco）','孟菲斯俏皮','哥特暗黑','洛可可华丽','巴洛克奢华','未来主义科幻','赛博朋克霓虹','蒸汽朋克机械','奇幻树屋风','魔法塔神秘','童话糖果屋','水下珊瑚宫','云端浮岛居','星空沉浸风','晶体洞穴风','废土生存风']},
+        {title:'特殊设施（可多选）',type:'multi',tags:['全息壁炉','自动烹饪台','冥想悬浮舱','室内星空穹顶','传送门入户玄关','魔法清洁扫帚柜','情绪调色灯光系统','智能仿生水族墙','攀岩式室内楼梯','地下酒窖滑梯','隐藏式密室书柜门','浴缸式海浪模拟器','声控变形家具','室内秋千吊椅','垂直花园自灌溉墙','宠物自动梳洗屋','衣帽间虚拟试衣镜','时光照片回忆池','家庭药草蒸馏室','室内小型瀑布','屋顶天文伸缩台','沉浸式全息游戏舱','睡眠调节磁场床','漂浮音乐沙发','魔镜天气预报台','自动折叠变形厨房','家庭元素炼金台','室内吊床走廊','冥想雨声模拟室','记忆回放观影厅']}
+      ]},
+      {id:'wardrobe',title:'12. 衣帽间',type:'multi-sub',subs:[
+        {title:'套装（可多选）',type:'multi',tags:['西装三件套','衬衫马甲套装','运动休闲套装','牛仔夹克套装','连体工装裤套装','睡衣套装','骑行服套装','汉服直裾套装','JK制服套装','洛丽塔裙装套','燕尾礼服套装','旗袍外披套装','冲锋衣保暖套装','针织开衫内搭套','风衣腰带套裙','皮衣机车套','学院风针织背心套','沙滩比基尼罩衫套','瑜伽运动套','夹棉飞行服套','工装背带裤套','马术骑士套','滑雪服连体套','围巾帽手套三件套','雨衣雨靴套','晚礼服披肩套','暗黑哥特裙套','蒸汽朋克马甲套','魔法师长袍套','科幻紧身甲套']},
+        {title:'装饰（可多选）',type:'multi',tags:['项链','吊坠','手链','手镯','脚链','戒指','耳环','耳钉','发簪','发梳','发夹','发带','头冠','王冠','额饰','眉心坠','鼻环','唇钉','舌钉','脐环','颈圈','臂环','腰链','踝链','胸针','领针','袖扣','领带夹','丝巾扣','胸花','肩饰','披肩扣','怀表链','眼镜链','扇坠','剑穗','玉佩','香囊','荷包','步摇','璎珞','念珠','手串','扳指','锁骨链','背链','风铃挂件','捕梦网','羽毛挂饰','符文石挂坠','元素晶簇吊坠']},
+        {title:'妆容（可多选）',type:'multi',tags:['淡妆','浓妆','裸妆','烟熏妆','猫眼妆','复古妆','新娘妆','晚宴妆','职场妆','少女妆','御姐妆','韩系妆','日系妆','欧美妆','透明妆','水光妆','哑光妆','雾面妆','微醺妆','晒伤妆','雀斑妆','精灵妆','仙女妆','吸血鬼妆','哥特妆','朋克妆','金属妆','未来感妆','赛博妆','极简妆','素颜妆','星辰妆','极光妆','蜜桃妆','咬唇妆','镜面唇妆','玻璃唇妆','花瓣唇妆']},
+        {title:'鞋子（可多选）',type:'multi',tags:['帆布鞋','运动鞋','板鞋','跑鞋','篮球鞋','登山靴','马丁靴','切尔西靴','雪地靴','雨靴','长筒靴','过膝靴','骑士靴','牛仔靴','皮鞋','乐福鞋','牛津鞋','玛丽珍鞋','芭蕾舞鞋','豆豆鞋','凉鞋','罗马凉鞋','穆勒鞋','拖鞋','高跟鞋（细跟）','粗跟鞋','松糕鞋','老爹鞋','舞蹈鞋','魔法飞靴','悬浮滑板鞋','蒸汽朋克齿轮靴','精灵长靴','龙鳞战靴']},
+        {title:'美甲（可多选）',type:'multi',tags:['纯色美甲','法式美甲','渐变美甲','猫眼美甲','磨砂美甲','镜面美甲','亮片美甲','哑光美甲','果冻美甲','琥珀美甲','大理石纹','贝壳纹','豹纹美甲','波点美甲','爱心美甲','花朵美甲','星月美甲','银河美甲','极光美甲','碎钻美甲','珍珠美甲','浮雕美甲','丝绒美甲','晕染甲','手绘甲','芭蕾甲','杏仁甲','日系可爱风','韩系简约风','暗黑哥特风','3D立体雕花甲','夜光甲']},
+        {title:'季节适配（可多选）',type:'multi',tags:['【春】薄款西装套裙','【春】针织开衫连衣裙套','【春】风衣配衬衫半裙套','【春】牛仔外套连衣裙套','【春】碎花连衣裙配开衫套','【夏】吊带裙外搭薄衫套','【夏】短袖T恤配短裤套','【夏】连体阔腿裤套','【夏】沙滩比基尼罩衫套','【夏】波西米亚长裙套','【夏】夏日清爽亚麻套装','【秋】毛衣配半身裙套','【秋】卫衣配束脚裤套','【秋】风衣配针织裙套','【秋】皮衣配紧身裤套','【秋】灯芯绒套装','【秋】格纹西装套装','【冬】羽绒服配针织裙套','【冬】毛呢大衣配毛衣裙套','【冬】加绒卫衣套装','【冬】皮草外套配长靴套','【冬】围巾手套帽子三件套']}
+      ]},
+      {id:'relationships',title:'13. 人际关系',type:'multi-sub',subs:[
+        {title:'父亲（可多选）',type:'multi',tags:['严肃古板','幽默风趣','沉默寡言','唠唠叨叨','威严强势','温和慈爱','工作狂','顾家好男人','大男子主义','妻管严','女儿奴','儿子严师','粗心大意','细心体贴','不善表达','行动派','暴躁易怒','耐心十足','节俭抠门','慷慨大方','厨艺高超','黑暗料理王','老好人','固执己见','开明前卫','传统守旧','保护欲强','放任自流','冷幽默','硬汉外表','少女心老爹']},
+        {title:'母亲（可多选）',type:'multi',tags:['温柔体贴','唠唠叨叨','控制欲强','过度保护','开明自由','严厉苛刻','慈爱包容','偏心眼','女强人','全职主妇','厨艺精湛','黑暗料理王','心灵手巧','爱操心','时尚潮妈','朴素节俭','洁癖','坚强如钢','玻璃心','戏精','少女心','耐心十足','急性子','虎妈','猫妈','闺蜜型','严师型','溺爱型','幽默风趣','情绪稳定','爱种花','爱追剧']},
+        {title:'兄弟姐妹（可多选）',type:'multi',tags:['争强好胜','处处谦让','保护欲强','爱打小报告','背锅侠','学霸型','学渣型','跟屁虫','带头大哥/大姐','贴心棉袄','冷漠疏离','亲密无间','暗中较劲','互相嫌弃但容不得外人欺负','家里的开心果','沉默寡言的那个','窝里横','护短狂魔','童年唯一玩伴','成年最熟悉的陌生人']},
+        {title:'好友/死党/闺蜜（可多选）',type:'multi',tags:['两肋插刀','无话不谈','最佳损友','互相拆台','臭味相投','形影不离','长期不见面依然亲','秒回消息','借钱不问理由','知晓所有黑历史','默契十足','一个眼神就懂','情绪垃圾桶','人生军师','冷战超不过三天','唯一敢说真话的人','可以素颜见面','可以哭得稀里哗啦','一起干过坏事','一起扛过困难','永远不会绝交的人','最信任的人']},
+        {title:'讨厌的人（可多选）',type:'multi',tags:['背后捅刀子','搬弄是非','两面三刀','阴阳怪气','双标怪','杠精附体','甩锅侠','抢功劳精','道德绑架者','得寸进尺','忘恩负义','过河拆桥','落井下石','造谣生事','虚伪做作','笑面虎','势利眼','键盘侠','PUA大师','画饼达人','巨婴','控制狂','撒谎成性','负能量黑洞','边界感为零','背叛信任']}
+      ]},
+      {id:'pet',title:'14. 宠物',type:'multi-sub',subs:[
+        {title:'大类（可多选）',type:'multi',tags:['狗','猫','仓鼠','兔子','龙猫','豚鼠','刺猬','蜜袋鼯','松鼠','雪貂','鹦鹉','文鸟','金鱼','锦鲤','热带鱼','乌龟','蜥蜴','蛇','蜘蛛','蝎子','独角兽','飞马','龙','精灵','小仙子','树精','火蜥蜴','冰狐','岩石龟','风羽鸟','电鼠','蘑菇怪','软泥怪','宝石虫','荧光蝶','小恶魔','天使猫','幻影猫','蒸汽机械宠物','魔偶娃娃','书本妖精','梦境食梦貘']},
+        {title:'体型特征（可多选）',type:'multi',tags:['小巧玲珑','圆滚滚','修长苗条','巨大无比','迷你型','超小体','矮胖墩','壮硕如山','翼展宽广','尾巴蓬松巨大','头部比例大','肌肉发达型','匀称标准','微胖手感好','蜷缩成团']},
+        {title:'性格特征（可多选）',type:'multi',tags:['温顺黏人','高冷独立','活泼好动','慵懒嗜睡','胆小怕生','勇敢护主','聪明机灵','呆萌迟钝','调皮捣蛋','乖巧听话','忠诚不二','神经兮兮','傲娇任性','粘人精','贪吃贪玩','暴躁易怒','温和友善','话痨爱叫','爱撒娇','爱搞破坏','戏精附体','佛系躺平','社交达人','霸道强势']}
+      ]},
+      {id:'scent',title:'15. 调香室',type:'multi-sub',subs:[
+        {title:'体香（单选）',type:'single',tags:['皂香','奶香','檀香','沉香','竹香','茶香','墨香','纸香','棉麻香','阳光晒后味','雨后泥土味','青草香','松木香','雪松味','苔藓味','溪水凉意','海风咸味','蜜糖甜','花蜜香','蔷薇香','茉莉味','栀子花味','橙花香','桂花甜','铃兰清','薰衣草安','迷迭香','薄荷凉','柚皮清苦','佛手柑淡']},
+        {title:'香水（可多选）',type:'multi',tags:['玫瑰与琥珀','白茶清韵','蓝风铃','鼠尾草与海盐','乌木沉香','鸢尾花蕾','茉莉白花','橙花秘境','柠檬马鞭草','无花果叶','雪松与香柠檬','檀道','晚香玉','栀子花露','桂花甜酿','黑莓月桂','麝香绒','焚香教堂','广藿之舞','香根草大地','皮革与烟草','朗姆酒香草','蜂蜜金灿','牛奶椰子','睡莲水影','薰衣草田','薄荷冰晶','西柚天堂','零陵香豆','龙涎香夜','琥珀烟云','星尘花蜜','极光雪松','月光麝香','茶香白麝香']}
+      ]},
+      {id:'voice',title:'16. 调音室',type:'multi-sub',subs:[
+        {title:'嗓音特征（可多选）',type:'multi',tags:['低沉浑厚','清亮悦耳','甜美软糯','沙哑磁性','尖细刺耳','温和醇厚','空灵飘渺','干涩粗糙','圆润饱满','单薄纤细','洪亮如钟','轻柔似风','冰冷机械','温暖治愈','童稚嫩声','沧桑烟嗓','气声性感','鼻音浓重','咬字清晰','含糊不清','尾音上扬','抑扬顿挫','播音腔','娃娃音','御姐音','少年感','大叔嗓','丝绸般顺滑','近耳呢喃','颤音动人','口音可爱']},
+        {title:'音高（可多选）',type:'multi',tags:['极高（哨音）','高亢嘹亮','偏高明亮','中高区清澈','自然中音','中低区温厚','偏低沉稳','低音浑厚','极低（次声感）','女高音区','女中音区','女低音区','男高音区','男中音区','男低音区','假声超高','混声平衡','头声轻盈','胸声厚重','低音炮','海豚音']},
+        {title:'语速（可多选）',type:'multi',tags:['极快（连珠炮）','快速急切','偏快活泼','正常语速','偏慢从容','缓慢拖沓','极慢（一字一顿）','时快时慢','匀速平稳','断断续续','结结巴巴','懒洋洋慢吞吞','紧张型语速飙升','冷静型稳定语速','兴奋型噼里啪啦','温柔慢速','压迫感快速']},
+        {title:'语气（可多选）',type:'multi',tags:['温柔','冷漠','嘲讽','调侃','戏谑','严肃','慵懒','急切','委屈','撒娇','霸道','天真','慈祥','刻薄','阴阳怪气','恭敬','轻蔑','豪迈','羞怯','忧郁','雀跃','淡定','慌乱','神秘','犹豫','坚定','甜蜜','苦涩','得意','失落','斩钉截铁','奶声奶气','老气横秋']}
+      ]},
+      {id:'preferences',title:'17. 喜恶偏好',hint:'点一下👍喜欢，点两下👎讨厌，再点取消',type:'three-state-sub',subs:[
+        {title:'食物',tags:['米饭','面条','馒头','包子','饺子','馄饨','汤圆','年糕','粥','炒饭','炒面','披萨','汉堡','三明治','热狗','炸鸡','烤肉','牛排','羊排','培根','香肠','鱼排','虾仁','螃蟹','龙虾','寿司','刺身','沙拉','咖喱','火锅','麻辣烫','烧烤','薯条','薯片','意大利面','面包','蛋糕','饼干','巧克力','糖果','冰淇淋','布丁','酸奶','牛奶','豆浆','果汁','咖啡','茶','可乐','蛋挞','泡芙','马卡龙','甜甜圈','松饼','华夫饼','煎饼果子','油条','拉面','炒年糕','泡菜','石锅拌饭','关东煮','饭团','烤红薯','糖葫芦','棉花糖','爆米花','奶茶']},
+        {title:'动物',tags:['猫','狗','牛','羊','马','猪','兔','鼠','蛇','蜥蜴','龟','蛙','鱼','虾','蟹','海豚','鲸','鲨鱼','企鹅','北极熊','熊猫','老虎','狮子','豹','狼','狐狸','大象','长颈鹿','犀牛','斑马','骆驼','羊驼','鹿','袋鼠','考拉','浣熊','松鼠','仓鼠','刺猬','蝙蝠','猴子','树懒','鹦鹉','蝴蝶','蜜蜂','蚂蚁','蜘蛛','蝎子','蜻蜓','螳螂']},
+        {title:'环境/天气',tags:['春日午后','夏日暴雨','秋日黄昏','冬夜大雪','晴空万里','乌云密布','雷雨交加','薄雾清晨','阴雨连绵','暴风雪','雪后初晴','雨后彩虹','极光之夜','星空露营','月圆之夜','破晓黎明','血色晚霞','深夜便利店','空旷停车场','图书馆角落','咖啡馆窗边','地铁末班车','学校天台','无人沙滩','茂密森林','山顶观景台','湖泊岸边','飞船驾驶舱','海底观察室','梦境空间']},
+        {title:'娱乐',tags:['看电影','听音乐','K歌','跳舞','玩桌游','打麻将','下棋','打电子游戏','刷短视频','看直播','逛博物馆','健身','跑步','游泳','打篮球','爬山','露营','钓鱼','烹饪烘焙','做手工','读小说','写日记','摄影','绘画','练乐器','养宠物','种花草','泡温泉','冥想','瑜伽','玩密室逃脱','玩剧本杀','逛游乐园']},
+        {title:'音乐',tags:['古典音乐','轻音乐','歌剧','交响乐','民谣','流行音乐','摇滚乐','重金属','朋克摇滚','另类摇滚','独立摇滚','电子音乐','嘻哈','R&B','灵魂乐','爵士乐','蓝调','乡村音乐','拉丁音乐','雷鬼','新世纪音乐','氛围音乐','游戏音乐','动画音乐','OST','术力口（ボカロ）']}
+      ]},
+      {id:'skills',title:'18. 小技能',hint:'可多选',type:'multi',tags:['折纸','变魔术','吹口哨','转笔','玩魔方','解九连环','抖空竹','踢毽子','跳绳','打水漂','模仿动物叫','口技','腹语','打响指','单手剥鸡蛋','快速削苹果皮','编织手链','刺绣简单图案','缝扣子','织围巾','打领带','系蝴蝶结','吹口琴','弹尤克里里','画简笔画','写艺术字','做书签','折气球动物','抛接三个橘子','倒立行走','前滚翻','后滚翻','侧手翻','下腰','劈叉','吹树叶哨','做橡皮章','刻萝卜花','快速数钱','单手开易拉罐','闭眼走直线']},
+      {id:'habits',title:'19. 小习惯',hint:'可多选',type:'multi',tags:['咬指甲','抖腿','转笔','掰手指关节','摸鼻子','舔嘴唇','咬嘴唇','皱眉','眯眼睛','挑眉','搓手','扯衣角','玩头发','啃笔帽','敲桌面','哼歌','自言自语','吹口哨','打响指','托腮','盘腿坐','翘二郎腿','蜷缩脚趾','捏眉心','揉太阳穴','摸下巴','叹气','双手插兜','推眼镜','摩挲大腿','按圆珠笔咔哒响','发呆凝视','睡前刷手机','早起赖床','闹钟按掉再睡五分钟']},
+      {id:'nsfw',title:'20. NSFWの性癖表现',hint:'可多选',type:'multi-sub',subs:[
+        {title:'体型身材',type:'multi',tags:['体型差','身高差','最萌身高差','大只攻小只受','小只攻大只受','肌肉','薄肌','精瘦','纤细','丰满','肉感','微胖','宽肩窄腰','倒三角','公狗腰','壮受','美攻壮受','双开门','身材比例绝佳','长腿','腕线过裆']},
+        {title:'性格',type:'multi',tags:['冰山','高冷','温柔','腹黑','忠犬','傲娇','病娇','天然黑','天然呆','软萌','疯批','偏执','鬼畜','毒舌','闷骚','元气','慵懒','高岭之花','纯情','色气','海王','纯爱战士','恶劣美人','清冷美人','钓系','直球','粘人精','小太阳','阴郁','狂犬','绿茶','白切黑','黑切白']},
+        {title:'身份关系',type:'multi',tags:['年上','年下','强强','强弱','双强','互攻','师生','上司下属','青梅竹马','死对头','宿敌','室友','同桌','搭档','明星×经纪人','偶像×粉丝','教练×选手','医生×患者','警官×罪犯','主人×执事','少爷×保镖']},
+        {title:'关系互动',type:'multi',tags:['双向暗恋','单箭头','追妻火葬场','破镜重圆','先婚后爱','欢喜冤家','相爱相杀','因恨生爱','暗恋成真','久别重逢','一见钟情','日久生情','双向奔赴','极限拉扯','暧昧期拉满','吃醋','占有欲','嫉妒','宣示主权','保护欲','依赖','撒娇','示弱','逞强']},
+        {title:'场景情境',type:'multi',tags:['壁咚','膝枕','背后抱','公主抱','共浴','同床共枕','醉酒','发烧照顾','下雨共伞','被困电梯','失忆','假戏真做','伪装情侣','只有一张床','湿身','停电','温泉旅行','合宿']},
+        {title:'身体部位控',type:'multi',tags:['手控','腿控','腰控','锁骨控','喉结控','背肌控','腹肌控','脖颈控','手腕控','脚踝控','手指控','足控','青筋手','骨节分明','修长手指','冷白皮','小麦色','泪痣','虎牙','美人尖','异色瞳','纹身','伤疤','绷带','耳洞']},
+        {title:'服饰装扮',type:'multi',tags:['西装','军装','制服','和服','浴衣','执事服','旗袍','汉服','衬衫','领带','手套','眼镜','choker','项圈','吊带袜','丝袜','高领','露背','露腰','oversize衬衫','男友衬衫','围裙','只穿围裙','皮革','蕾丝','透明','半脱不脱','衣衫不整','领口大开']},
+        {title:'涩涩行为',type:'multi',tags:['亲吻','深吻','舌吻','舔舐','咬痕','吻痕','种草莓','耳鬓厮磨','蹭蹭','摸头杀','牵手','十指相扣','口交','手交','腿交','后入','骑乘','面对面','压制','束缚','蒙眼','露出','野外','浴室play','办公室play','镜子play','中出','连续高潮','寸止']},
+        {title:'BDSM轻度',type:'multi',tags:['束缚','捆绑','蒙眼','口塞','项圈','牵引','跪姿','服从','支配','命令','惩罚','奖励','安全词','dom','sub','switch','绳缚','手铐','宠物play','调教','sp','羞耻play','被发现的紧张感']},
+        {title:'情感氛围',type:'multi',tags:['纯爱','虐恋','甜宠','虐身虐心','先虐后甜','刀糖','治愈','致郁','暗黑','扭曲','病态','偏执爱','占有爱','共依存','互相救赎','涩气','禁欲','欲求不满','干柴烈火','理性崩坏','失控','沉沦']},
+        {title:'声音气味',type:'multi',tags:['低音炮','声控','耳语','喘息','呻吟','低笑','气声','ASMR','耳边吹气','哭腔','沙哑嗓音','体香','皂香','香水味','烟味','酒气','汗味','信息素味道']},
+        {title:'ABO相关',type:'multi',tags:['Alpha','Beta','Omega','Enigma','信息素','发情期','标记','临时标记','永久标记','成结','筑巢','抑制剂','易感期','信息素失控','发情期提前','气味依赖','抑制剂失效','非典型ABO']},
+        {title:'哨向相关',type:'multi',tags:['哨兵','向导','精神体','精神图景','精神链接','精神疏导','精神结合','感官过载','屏障','结合热','精神体交缠','塔','黑暗哨兵','匹配度','精神域崩塌','感官剥夺','五感共享']},
+        {title:'兽人相关',type:'multi',tags:['兽耳','兽尾','猫耳','犬耳','狐耳','狼耳','兔耳','尾巴play','耳朵敏感','半兽化','梳毛','炸毛','耳朵抖动','尾巴摇晃','肉球','爪子','獠牙','项圈铃铛','尾巴根部敏感']},
+        {title:'人外相关',type:'multi',tags:['触手','寄生','共生','恶魔','天使','翅膀','精灵耳','人鱼','蛇妖','黏液','拟态','变形','多眼','鳞片','角','产卵']},
+        {title:'龙性恋相关',type:'multi',tags:['龙角','龙尾','龙翼','龙鳞','龙舌','半龙化','龙角敏感','龙尾缠绕','龙翼包裹','龙息','龙瞳','龙血','龙巢','骑龙','龙族发情期','龙与骑士','屠龙者×龙','龙×祭品']},
+        {title:'杂项',type:'multi',tags:['体型差拥抱','睡颜','指尖颤抖','膝盖发软','被吻到腿软','两只手腕被一只手握住','被掐着腰','被按在墙上','被按在镜子上','从背后靠近耳边说话','衬衫夹','领带被拽住拉近接吻','眼镜被摘下','手指插进头发里','事后清晨','穿着对方的衣服','留气味在对方衣物上','渡烟kiss','pocky game']}
+      ]}
+    ];
+
+    // ===== Render =====
+    function renderGeneralTags(){const container=document.getElementById('general-tags-container');let html='';generalSections.forEach(section=>{if(section.type==='custom'){html+=renderCustomSection(section);return;}html+=`<div class="tag-section" id="section-${section.id}"><div class="tag-section-header" onclick="toggleSection('${section.id}')"><span class="tag-section-title">${section.title}</span><span class="tag-section-arrow">▼</span></div><div class="tag-section-body">`;if(section.hint)html+=`<div class="tag-section-hint">${section.hint}</div>`;if(section.type==='single'||section.type==='multi'){html+=renderTagWrap(section.id,null,section.tags,section.type);html+=renderAddRow(section.id,null);}else if(section.type==='multi-sub'){section.subs.forEach((sub,idx)=>{html+=`<div class="tag-subsection-title">${sub.title}</div>`;html+=renderTagWrap(section.id,idx,sub.tags,sub.type);html+=renderAddRow(section.id,idx);});}else if(section.type==='three-state-sub'){section.subs.forEach((sub,idx)=>{html+=`<div class="tag-subsection-title">${sub.title}</div>`;html+=renderTagWrap(section.id,idx,sub.tags,'three');html+=renderAddRow(section.id,idx);});}html+=`</div></div>`;});container.innerHTML=html;}
+
+    function renderCustomSection(section){if(section.id==='basic-info'){return `<div class="tag-section" id="section-basic-info"><div class="tag-section-header" onclick="toggleSection('basic-info')"><span class="tag-section-title">1. 基础信息</span><span class="tag-section-arrow">▼</span></div><div class="tag-section-body"><div class="form-group"><label class="form-label">姓名</label><div class="name-row"><input class="form-input" type="text" id="gen-name" placeholder="可自行填写或留空让AI随机生成" oninput="updateSummary()"><button class="name-random-btn" onclick="document.getElementById('gen-name').value='';updateSummary();">清空</button></div></div><div class="form-group"><label class="form-label">外号/别称（可选）</label><input class="form-input" type="text" id="gen-nickname" placeholder="可填可不填" oninput="updateSummary()"></div><div class="form-group"><label class="form-label">性别</label><input class="form-input" type="text" id="gen-gender" placeholder="不必局限于男女" oninput="updateSummary()"></div><div class="form-group"><label class="form-label">年龄</label><input class="form-input" type="text" id="gen-age" placeholder="例：23岁 / 数百年 / 未知" oninput="updateSummary()"></div></div></div>`;}if(section.id==='char-relation'){return `<div class="tag-section" id="section-char-relation"><div class="tag-section-header" onclick="toggleSection('char-relation')"><span class="tag-section-title">2. 你好👋，char！</span><span class="tag-section-arrow">▼</span></div><div class="tag-section-body"><div class="form-group"><label class="form-label">char信息</label><textarea class="form-textarea" id="gen-char-info" placeholder="导入角色卡后会自动填充，也可手动输入…" style="min-height:80px;" oninput="updateSummary()"></textarea></div><div class="tag-subsection-title">u与c的关系（可多选）</div>${renderTagWrap('char-relation',null,['陌生人','点头之交','熟人','好友','笔友','网友','战友','同学','师生','同事','上下级','宿舍室友','合租室友','暗恋','暧昧','伴侣','夫妻','前任','地下恋情','契约夫妻','情人','兄弟姐妹','远亲','领养','邻居','青梅竹马','天降','白月光与替身','宿敌','死对头','欢喜冤家','相爱相杀','救赎','主仆','师徒','金主与金丝雀','灵魂伴侣','支配'],'multi')}${renderAddRow('char-relation',null)}</div></div>`;}return '';}
+
+    function renderTagWrap(sectionId,subIdx,tags,type){const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;let html=`<div class="tag-wrap" id="${wrapId}" data-section="${sectionId}" data-sub="${subIdx!==null?subIdx:''}" data-type="${type}">`;tags.forEach(tag=>{html+=`<span class="tag-bubble" data-tag="${escapeHtml(tag)}" onclick="handleTagClick(this)">${escapeHtml(tag)}</span>`;});html+=`</div>`;return html;}
+    function renderAddRow(sectionId,subIdx){const id=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;return `<div class="tag-add-row"><input class="tag-add-input" type="text" id="${id}" placeholder="自行添加…" onkeydown="if(event.key==='Enter')addCustomTag('${sectionId}',${subIdx!==null?subIdx:'null'})"><button class="tag-add-btn" onclick="addCustomTag('${sectionId}',${subIdx!==null?subIdx:'null'})">+添加</button></div>`;}
+
+    function handleTagClick(el){const wrap=el.parentElement;const type=wrap.dataset.type;if(type==='single'){const was=el.classList.contains('selected');wrap.querySelectorAll('.tag-bubble').forEach(b=>b.classList.remove('selected'));if(!was)el.classList.add('selected');}else if(type==='multi'){el.classList.toggle('selected');}else if(type==='three'){if(el.classList.contains('disliked')){el.classList.remove('disliked');}else if(el.classList.contains('liked')){el.classList.remove('liked');el.classList.add('disliked');}else{el.classList.add('liked');}}updateSummary();}
+
+    function addCustomTag(sectionId,subIdx){const inputId=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;const input=document.getElementById(inputId);const val=input.value.trim();if(!val)return;const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;const wrap=document.getElementById(wrapId);const span=document.createElement('span');span.className='tag-bubble';span.dataset.tag=val;span.textContent=val;span.onclick=function(){handleTagClick(this);};wrap.appendChild(span);input.value='';}
+
+    function toggleSection(id){document.getElementById('section-'+id).classList.toggle('open');}
+
+    function updateSummary(){const parts=[];const name=document.getElementById('gen-name')?.value.trim();const nickname=document.getElementById('gen-nickname')?.value.trim();const gender=document.getElementById('gen-gender')?.value.trim();const age=document.getElementById('gen-age')?.value.trim();if(name)parts.push(`【姓名】${name}`);if(nickname)parts.push(`【外号】${nickname}`);if(gender)parts.push(`【性别】${gender}`);if(age)parts.push(`【年龄】${age}`);const charInfo=document.getElementById('gen-char-info')?.value.trim();if(charInfo)parts.push(`【char信息】${charInfo}`);document.querySelectorAll('#general-tags-container .tag-wrap').forEach(wrap=>{const type=wrap.dataset.type;const selected=[];wrap.querySelectorAll('.tag-bubble').forEach(b=>{if(type==='three'){if(b.classList.contains('liked'))selected.push('👍'+b.dataset.tag);else if(b.classList.contains('disliked'))selected.push('👎'+b.dataset.tag);}else{if(b.classList.contains('selected'))selected.push(b.dataset.tag);}});if(selected.length){const sectionEl=wrap.closest('.tag-section');const titleEl=sectionEl?.querySelector('.tag-section-title');const sectionTitle=titleEl?titleEl.textContent.replace(/^\d+\.\s*/,''):'';let subTitle='';const prev=wrap.previousElementSibling;if(prev&&prev.classList.contains('tag-subsection-title'))subTitle=prev.textContent.replace(/（.*）/,'');const label=subTitle?`【${sectionTitle}-${subTitle}】`:`【${sectionTitle}】`;parts.push(`${label}${selected.join('、')}`);}});const summaryEl=document.getElementById('general-summary');if(!parts.length){summaryEl.innerHTML='<span class="summary-empty">还没有选择任何标签…</span>';}else{summaryEl.textContent=parts.join('\n');}}
+
+    // Init
+    loadApi('text');loadApi('img');loadPrompt('text');loadPrompt('img');renderArchives();renderGeneralTags();
+  </script>
+</body>
+</html>
