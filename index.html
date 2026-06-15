@@ -728,8 +728,7 @@
 
     function updateSummary(){const parts=[];const name=document.getElementById('gen-name')?.value.trim();const nickname=document.getElementById('gen-nickname')?.value.trim();const gender=document.getElementById('gen-gender')?.value.trim();const age=document.getElementById('gen-age')?.value.trim();if(name)parts.push(`【姓名】${name}`);if(nickname)parts.push(`【外号】${nickname}`);if(gender)parts.push(`【性别】${gender}`);if(age)parts.push(`【年龄】${age}`);const charInfo=document.getElementById('gen-char-info')?.value.trim();if(charInfo)parts.push(`【char信息】${charInfo}`);document.querySelectorAll('#general-tags-container .tag-wrap').forEach(wrap=>{const type=wrap.dataset.type;const selected=[];wrap.querySelectorAll('.tag-bubble').forEach(b=>{if(type==='three'){if(b.classList.contains('liked'))selected.push('👍'+b.dataset.tag);else if(b.classList.contains('disliked'))selected.push('👎'+b.dataset.tag);}else{if(b.classList.contains('selected'))selected.push(b.dataset.tag);}});if(selected.length){const sectionEl=wrap.closest('.tag-section');const titleEl=sectionEl?.querySelector('.tag-section-title');const sectionTitle=titleEl?titleEl.textContent.replace(/^\d+\.\s*/,''):'';let subTitle='';const prev=wrap.previousElementSibling;if(prev&&prev.classList.contains('tag-subsection-title'))subTitle=prev.textContent.replace(/（.*）/,'');const label=subTitle?`【${sectionTitle}-${subTitle}】`:`【${sectionTitle}】`;parts.push(`${label}${selected.join('、')}`);}});const summaryEl=document.getElementById('general-summary');if(!parts.length){summaryEl.innerHTML='<span class="summary-empty">还没有选择任何标签…</span>';}else{summaryEl.textContent=parts.join('\n');}}
 
-    // Init
-    
+    // Init    
     // ===== Image Generation Page =====
     async function handleImggenFileImport() {
       const input = document.getElementById('imggen-file-input');
