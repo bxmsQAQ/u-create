@@ -194,7 +194,105 @@
     </div>
     <div class="page" id="page-cat-ancient"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">🏯 古风人设</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-ancient" onchange="toggleUpload('char-ancient')">关联到角色卡</label><div class="upload-area" id="upload-char-ancient"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-ancient" onchange="handleFileSelect('char-ancient')"><div class="upload-file-name" id="file-char-ancient-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-ancient" onchange="toggleUpload('world-ancient')">关联到世界书</label><div class="upload-area" id="upload-world-ancient"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-ancient" onchange="handleFileSelect('world-ancient')"><div class="upload-file-name" id="file-world-ancient-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
     <div class="page" id="page-cat-fantasy"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">⚔️ 西幻人设</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-fantasy" onchange="toggleUpload('char-fantasy')">关联到角色卡</label><div class="upload-area" id="upload-char-fantasy"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-fantasy" onchange="handleFileSelect('char-fantasy')"><div class="upload-file-name" id="file-char-fantasy-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-fantasy" onchange="toggleUpload('world-fantasy')">关联到世界书</label><div class="upload-area" id="upload-world-fantasy"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-fantasy" onchange="handleFileSelect('world-fantasy')"><div class="upload-file-name" id="file-world-fantasy-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
-    <div class="page" id="page-cat-polish"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">✨ 现有人设润色</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-polish" onchange="toggleUpload('char-polish')">关联到角色卡</label><div class="upload-area" id="upload-char-polish"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-polish" onchange="handleFileSelect('char-polish')"><div class="upload-file-name" id="file-char-polish-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-polish" onchange="toggleUpload('world-polish')">关联到世界书</label><div class="upload-area" id="upload-world-polish"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-polish" onchange="handleFileSelect('world-polish')"><div class="upload-file-name" id="file-world-polish-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
+    <div class="page" id="page-cat-polish">
+  <div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">✨ 现有人设润色</div></div>
+
+  <div class="section-box">
+    <label class="checkbox-row"><input type="checkbox" id="check-char-polish" onchange="toggleUpload('char-polish')">关联到角色卡</label>
+    <div class="upload-area" id="upload-char-polish"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-polish" onchange="handleFileSelect('char-polish')"><div class="upload-file-name" id="file-char-polish-name"></div></div>
+    <label class="checkbox-row"><input type="checkbox" id="check-world-polish" onchange="toggleUpload('world-polish')">关联到世界书</label>
+    <div class="upload-area" id="upload-world-polish"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-polish" onchange="handleFileSelect('world-polish')"><div class="upload-file-name" id="file-world-polish-name"></div></div>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">📄 现有人设内容</div>
+    <p class="prompt-hint">粘贴你的人设文本，或导入文件（支持 .txt / .docx / .json / .png）</p>
+    <div class="form-group">
+      <textarea class="form-textarea" id="polish-input" placeholder="在此粘贴你的现有人设内容…" style="min-height:200px;" oninput="updatePolishSummary()"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">或从文件导入</label>
+      <input type="file" accept=".txt,.docx,.json,.png" id="polish-file-input" onchange="handlePolishFileImport()" style="font-size:13px;">
+      <div class="upload-file-name" id="polish-file-name"></div>
+    </div>
+  </div>
+
+  <div class="tag-section" id="section-polish-direction">
+    <div class="tag-section-header" onclick="toggleSection('polish-direction')">
+      <span class="tag-section-title">🎯 润色方向</span>
+      <span class="tag-section-arrow">▼</span>
+    </div>
+    <div class="tag-section-body">
+      <div class="tag-section-hint">可多选</div>
+      <div class="tag-wrap" id="wrap-polish-direction" data-section="polish-direction" data-sub="" data-type="multi">
+        <span class="tag-bubble" data-tag="增强性格深度" onclick="handleTagClick(this)">增强性格深度</span>
+        <span class="tag-bubble" data-tag="细化外貌特征" onclick="handleTagClick(this)">细化外貌特征</span>
+        <span class="tag-bubble" data-tag="丰富背景故事" onclick="handleTagClick(this)">丰富背景故事</span>
+        <span class="tag-bubble" data-tag="突出核心矛盾" onclick="handleTagClick(this)">突出核心矛盾</span>
+        <span class="tag-bubble" data-tag="强化情感动机" onclick="handleTagClick(this)">强化情感动机</span>
+        <span class="tag-bubble" data-tag="增加行为习惯" onclick="handleTagClick(this)">增加行为习惯</span>
+        <span class="tag-bubble" data-tag="完善人际关系" onclick="handleTagClick(this)">完善人际关系</span>
+        <span class="tag-bubble" data-tag="优化对话风格" onclick="handleTagClick(this)">优化对话风格</span>
+        <span class="tag-bubble" data-tag="提升角色弧光" onclick="handleTagClick(this)">提升角色弧光</span>
+        <span class="tag-bubble" data-tag="补充独特癖好" onclick="handleTagClick(this)">补充独特癖好</span>
+        <span class="tag-bubble" data-tag="明确能力限制" onclick="handleTagClick(this)">明确能力限制</span>
+        <span class="tag-bubble" data-tag="深化心理描写" onclick="handleTagClick(this)">深化心理描写</span>
+        <span class="tag-bubble" data-tag="调整语气一致性" onclick="handleTagClick(this)">调整语气一致性</span>
+        <span class="tag-bubble" data-tag="添加象征元素" onclick="handleTagClick(this)">添加象征元素</span>
+        <span class="tag-bubble" data-tag="强化时代感" onclick="handleTagClick(this)">强化时代感</span>
+        <span class="tag-bubble" data-tag="融入文化细节" onclick="handleTagClick(this)">融入文化细节</span>
+        <span class="tag-bubble" data-tag="制造记忆点" onclick="handleTagClick(this)">制造记忆点</span>
+        <span class="tag-bubble" data-tag="平衡优缺点" onclick="handleTagClick(this)">平衡优缺点</span>
+        <span class="tag-bubble" data-tag="突出反差特质" onclick="handleTagClick(this)">突出反差特质</span>
+        <span class="tag-bubble" data-tag="优化命名品味" onclick="handleTagClick(this)">优化命名品味</span>
+        <span class="tag-bubble" data-tag="精简冗余描述" onclick="handleTagClick(this)">精简冗余描述</span>
+        <span class="tag-bubble" data-tag="调整道德立场" onclick="handleTagClick(this)">调整道德立场</span>
+        <span class="tag-bubble" data-tag="增加幽默元素" onclick="handleTagClick(this)">增加幽默元素</span>
+        <span class="tag-bubble" data-tag="强化悲剧张力" onclick="handleTagClick(this)">强化悲剧张力</span>
+        <span class="tag-bubble" data-tag="统一逻辑行为" onclick="handleTagClick(this)">统一逻辑行为</span>
+        <span class="tag-bubble" data-tag="补充成长痕迹" onclick="handleTagClick(this)">补充成长痕迹</span>
+        <span class="tag-bubble" data-tag="细化职业细节" onclick="handleTagClick(this)">细化职业细节</span>
+        <span class="tag-bubble" data-tag="增强神秘感" onclick="handleTagClick(this)">增强神秘感</span>
+        <span class="tag-bubble" data-tag="优化出场印象" onclick="handleTagClick(this)">优化出场印象</span>
+        <span class="tag-bubble" data-tag="提升代入感" onclick="handleTagClick(this)">提升代入感</span>
+      </div>
+      <div class="tag-add-row">
+        <input class="tag-add-input" type="text" id="add-polish-direction" placeholder="自行添加…" onkeydown="if(event.key==='Enter')addCustomTag('polish-direction',null)">
+        <button class="tag-add-btn" onclick="addCustomTag('polish-direction',null)">+添加</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">📝 自行输入润色要求</div>
+    <div class="form-group">
+      <textarea class="form-textarea" id="polish-custom-req" placeholder="还有什么具体的润色要求？可以在这里补充…" style="min-height:80px;"></textarea>
+    </div>
+  </div>
+
+  <div class="word-count-row">
+    <span class="word-count-label">✨ 目标字数</span>
+    <input class="word-count-input" type="number" id="polish-word-count" value="1500" min="200" max="10000" step="100">
+    <span class="word-count-hint">字</span>
+  </div>
+
+  <div class="generate-actions">
+    <button class="btn-generate" id="btn-gen-polish" onclick="doPolish()">✨ 开始润色</button>
+  </div>
+
+  <div class="result-box" id="polish-result-box">
+    <div class="result-header">
+      <span class="result-title">📄 润色结果</span>
+      <span class="result-status" id="polish-result-status"></span>
+    </div>
+    <div class="result-content" id="polish-result-content"></div>
+    <div class="result-actions" id="polish-result-actions" style="display:none;">
+      <button class="btn-small" onclick="copyResult('polish')">📋 复制</button>
+      <button class="btn-small" onclick="saveToArchive('polish')">💾 存档</button>
+      <button class="btn-small" onclick="doPolish()">🔄 重新润色</button>
+    </div>
+  </div>
+    </div>
     <div class="page" id="page-archive"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-main')">返回</button><div class="page-title">存档区</div></div><div class="tab-row"><button class="tab-btn active" id="tab-archive" onclick="switchArchiveTab('archive')">存档</button><button class="tab-btn" id="tab-trash" onclick="switchArchiveTab('trash')">回收站</button></div><div id="archive-list" class="archive-list"></div><div id="trash-list" class="archive-list" style="display:none;"></div></div>
   </div>
   <div class="modal-overlay" id="modal"><div class="modal-box"><div class="modal-text" id="modal-text"></div><div class="modal-actions" id="modal-actions"></div></div></div>
@@ -371,6 +469,189 @@
     function addCustomTag(sectionId,subIdx){const inputId=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;const input=document.getElementById(inputId);const val=input.value.trim();if(!val)return;const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;const wrap=document.getElementById(wrapId);const span=document.createElement('span');span.className='tag-bubble';span.dataset.tag=val;span.textContent=val;span.onclick=function(){handleTagClick(this);};wrap.appendChild(span);input.value='';}
 
     function toggleSection(id){document.getElementById('section-'+id).classList.toggle('open');}
+        // ===== Polish Page Functions =====
+    async function handlePolishFileImport() {
+      const input = document.getElementById('polish-file-input');
+      const nameEl = document.getElementById('polish-file-name');
+      if (!input.files.length) return;
+      const file = input.files[0];
+      nameEl.textContent = '已选择: ' + file.name;
+      const ext = file.name.split('.').pop().toLowerCase();
+
+      if (ext === 'txt') {
+        const text = await file.text();
+        document.getElementById('polish-input').value = text;
+      } else if (ext === 'json') {
+        try {
+          const text = await file.text();
+          const json = JSON.parse(text);
+          // Try common character card formats
+          let content = '';
+          if (json.data?.description) content = json.data.description;
+          else if (json.description) content = json.description;
+          else if (json.char_persona) content = json.char_persona;
+          else if (json.persona) content = json.persona;
+          else content = JSON.stringify(json, null, 2);
+          document.getElementById('polish-input').value = content;
+        } catch (e) {
+          document.getElementById('polish-input').value = await file.text();
+        }
+      } else if (ext === 'png') {
+        // Try to extract text from PNG (character card embedded in metadata)
+        try {
+          const buffer = await file.arrayBuffer();
+          const bytes = new Uint8Array(buffer);
+          // Search for tEXt or iTXt chunk containing "chara"
+          let charData = '';
+          const textDecoder = new TextDecoder();
+          const fullText = textDecoder.decode(bytes);
+          // Look for base64-encoded chara data after "chara"
+          const charaIdx = fullText.indexOf('chara');
+          if (charaIdx !== -1) {
+            // Find the base64 data
+            let start = charaIdx + 5;
+            // Skip null bytes
+            while (start < bytes.length && bytes[start] === 0) start++;
+            let end = start;
+            while (end < bytes.length && bytes[end] !== 0 && bytes[end] !== 0xAE) end++;
+            const b64 = fullText.substring(start, end).trim();
+            try {
+              const decoded = atob(b64);
+              const json = JSON.parse(decoded);
+              charData = json.data?.description || json.description || JSON.stringify(json, null, 2);
+            } catch(e2) {
+              charData = '（PNG角色卡解析失败，请尝试手动粘贴内容）';
+            }
+          } else {
+            charData = '（未检测到角色卡数据，请尝试手动粘贴内容）';
+          }
+          document.getElementById('polish-input').value = charData;
+        } catch (e) {
+          document.getElementById('polish-input').value = '（文件读取失败）';
+        }
+      } else if (ext === 'docx') {
+        // Basic docx text extraction
+        try {
+          const buffer = await file.arrayBuffer();
+          const blob = new Blob([buffer]);
+          const zip = await (new Response(blob)).blob();
+          // Use JSZip-like approach: find document.xml in the zip
+          // Simplified: read as text and extract between <w:t> tags
+          const arrayBuf = await file.arrayBuffer();
+          const uint8 = new Uint8Array(arrayBuf);
+          const textDecoder = new TextDecoder();
+          const raw = textDecoder.decode(uint8);
+          // Try to find XML content
+          const wtMatches = raw.match(/<w:t[^>]*>([^<]*)<\/w:t>/g);
+          if (wtMatches && wtMatches.length > 0) {
+            const texts = wtMatches.map(m => m.replace(/<[^>]+>/g, ''));
+            document.getElementById('polish-input').value = texts.join('');
+          } else {
+            document.getElementById('polish-input').value = '（docx解析失败，建议先将内容复制为纯文本后粘贴）';
+          }
+        } catch(e) {
+          document.getElementById('polish-input').value = '（docx读取失败，建议使用txt格式）';
+        }
+      }
+    }
+
+    async function doPolish() {
+      if (isGenerating) {
+        if (abortController) abortController.abort();
+        isGenerating = false;
+        const btn = document.getElementById('btn-gen-polish');
+        btn.textContent = '✨ 开始润色'; btn.style.background = '';
+        return;
+      }
+
+      const originalText = document.getElementById('polish-input').value.trim();
+      if (!originalText) { showToast('请先输入或导入现有人设内容！'); return; }
+
+      const apiConfig = getApiConfig('text');
+      if (!apiConfig || !apiConfig.url || !apiConfig.key) { showToast('请先在 API设置 中配置文字API！'); return; }
+
+      // Collect selected polish directions
+      const directions = [];
+      document.querySelectorAll('#wrap-polish-direction .tag-bubble.selected').forEach(b => {
+        directions.push(b.dataset.tag);
+      });
+
+      const customReq = document.getElementById('polish-custom-req').value.trim();
+      const wordCount = document.getElementById('polish-word-count')?.value || 1500;
+      const systemPrompt = localStorage.getItem('ucreate_prompt_text') || document.getElementById('text-prompt').value;
+
+      let userMessage = `请对以下现有角色人设进行润色和优化。目标字数约${wordCount}字。\n\n`;
+      if (directions.length) {
+        userMessage += `润色方向：${directions.join('、')}\n\n`;
+      }
+      if (customReq) {
+        userMessage += `额外润色要求：${customReq}\n\n`;
+      }
+      userMessage += `现有人设内容如下：\n\n${originalText}\n\n请在保留原始设定核心的基础上，按照指定方向进行润色和扩展，使人设更加丰满、生动、有层次感。`;
+
+      // Start generation
+      isGenerating = true; abortController = new AbortController();
+      const btn = document.getElementById('btn-gen-polish');
+      btn.textContent = '⏹ 停止润色'; btn.style.background = '#c53030';
+
+      const resultBox = document.getElementById('polish-result-box');
+      const resultContent = document.getElementById('polish-result-content');
+      const resultStatus = document.getElementById('polish-result-status');
+      const resultActions = document.getElementById('polish-result-actions');
+
+      resultBox.classList.add('show'); resultContent.textContent = '';
+      resultContent.classList.add('cursor-blink');
+      resultStatus.textContent = '润色中…'; resultStatus.className = 'result-status generating';
+      resultActions.style.display = 'none';
+      setTimeout(() => resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+
+      try {
+        const res = await fetch(apiConfig.url.replace(/\/+$/, '') + '/chat/completions', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + apiConfig.key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            model: apiConfig.model || 'gpt-3.5-turbo',
+            messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userMessage }],
+            stream: true,
+            max_tokens: Math.max(2000, Math.round(wordCount * 2))
+          }),
+          signal: abortController.signal
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status + ': ' + (await res.text()).slice(0, 200));
+
+        const reader = res.body.getReader(), decoder = new TextDecoder();
+        let fullText = '', buffer = '';
+        while (true) {
+          const { done, value } = await reader.read(); if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n'); buffer = lines.pop() || '';
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed === 'data: [DONE]') continue;
+            if (!trimmed.startsWith('data: ')) continue;
+            try {
+              const json = JSON.parse(trimmed.slice(6));
+              const delta = json.choices?.[0]?.delta?.content;
+              if (delta) { fullText += delta; resultContent.textContent = fullText; resultContent.scrollTop = resultContent.scrollHeight; }
+            } catch (e) {}
+          }
+        }
+        resultContent.classList.remove('cursor-blink');
+        resultStatus.textContent = `润色完毕（约${fullText.length}字）`; resultStatus.className = 'result-status';
+        resultActions.style.display = 'flex';
+      } catch (err) {
+        resultContent.classList.remove('cursor-blink');
+        if (err.name === 'AbortError') {
+          resultStatus.textContent = '已停止'; resultStatus.className = 'result-status';
+          if (resultContent.textContent.length > 0) resultActions.style.display = 'flex';
+        } else {
+          resultStatus.textContent = '出错了'; resultStatus.className = 'result-status';
+          resultContent.textContent = '布豪！润色报错了！\n\n错误信息：' + err.message + '\n\n请检查 API 设置后重试。';
+        }
+      }
+      isGenerating = false; abortController = null;
+      btn.textContent = '✨ 开始润色'; btn.style.background = '';
+    }
 
     function updateSummary(){const parts=[];const name=document.getElementById('gen-name')?.value.trim();const nickname=document.getElementById('gen-nickname')?.value.trim();const gender=document.getElementById('gen-gender')?.value.trim();const age=document.getElementById('gen-age')?.value.trim();if(name)parts.push(`【姓名】${name}`);if(nickname)parts.push(`【外号】${nickname}`);if(gender)parts.push(`【性别】${gender}`);if(age)parts.push(`【年龄】${age}`);const charInfo=document.getElementById('gen-char-info')?.value.trim();if(charInfo)parts.push(`【char信息】${charInfo}`);document.querySelectorAll('#general-tags-container .tag-wrap').forEach(wrap=>{const type=wrap.dataset.type;const selected=[];wrap.querySelectorAll('.tag-bubble').forEach(b=>{if(type==='three'){if(b.classList.contains('liked'))selected.push('👍'+b.dataset.tag);else if(b.classList.contains('disliked'))selected.push('👎'+b.dataset.tag);}else{if(b.classList.contains('selected'))selected.push(b.dataset.tag);}});if(selected.length){const sectionEl=wrap.closest('.tag-section');const titleEl=sectionEl?.querySelector('.tag-section-title');const sectionTitle=titleEl?titleEl.textContent.replace(/^\d+\.\s*/,''):'';let subTitle='';const prev=wrap.previousElementSibling;if(prev&&prev.classList.contains('tag-subsection-title'))subTitle=prev.textContent.replace(/（.*）/,'');const label=subTitle?`【${sectionTitle}-${subTitle}】`:`【${sectionTitle}】`;parts.push(`${label}${selected.join('、')}`);}});const summaryEl=document.getElementById('general-summary');if(!parts.length){summaryEl.innerHTML='<span class="summary-empty">还没有选择任何标签…</span>';}else{summaryEl.textContent=parts.join('\n');}}
 
