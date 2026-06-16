@@ -550,7 +550,15 @@
     function renderTagWrap(sectionId,subIdx,tags,type){const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;let html=`<div class="tag-wrap" id="${wrapId}" data-section="${sectionId}" data-sub="${subIdx!==null?subIdx:''}" data-type="${type}">`;tags.forEach(tag=>{html+=`<span class="tag-bubble" data-tag="${escapeHtml(tag)}" onclick="handleTagClick(this)">${escapeHtml(tag)}</span>`;});html+=`</div>`;return html;}
     function renderAddRow(sectionId,subIdx){const id=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;return `<div class="tag-add-row"><input class="tag-add-input" type="text" id="${id}" placeholder="自行添加…" onkeydown="if(event.key==='Enter')addCustomTag('${sectionId}',${subIdx!==null?subIdx:'null'})"><button class="tag-add-btn" onclick="addCustomTag('${sectionId}',${subIdx!==null?subIdx:'null'})">+添加</button></div>`;}
 
-    function handleTagClick(el){const wrap=el.parentElement;const type=wrap.dataset.type;if(type==='single'){const was=el.classList.contains('selected');wrap.querySelectorAll('.tag-bubble').forEach(b=>b.classList.remove('selected'));if(!was)el.classList.add('selected');}else if(type==='multi'){el.classList.toggle('selected');}else if(type==='three'){if(el.classList.contains('disliked')){el.classList.remove('disliked');}else if(el.classList.contains('liked')){el.classList.remove('liked');el.classList.add('disliked');}else{el.classList.add('liked');}}updateSummary();}
+    function handleTagClick(el){const wrap=el.parentElement;const type=wrap.dataset.type;if(type==='single'){const was=el.classList.contains('selected');wrap.querySelectorAll('.tag-bubble').forEach(b=>b.classList.remove('selected'));if(!was)el.classList.add('selected');}else if(type==='multi'){el.classList.toggle('selected');}else if(type==='three'){if(el.classList.contains('disliked')){el.classList.remove('disliked');}else if(el.classList.contains('liked')){el.classList.remove('liked');el.classList.add('disliked');}else{el.classList.add('liked');}}
+    // 判断是哪个页面的标签，调用对应的汇总函数
+  const container=wrap.closest('#general-tags-container, #ancient-tags-container');
+  if(container&&container.id==='ancient-tags-container'){
+    updateAncientSummary();
+  }else{
+    updateSummary();
+  }
+}
 
     function addCustomTag(sectionId,subIdx){const inputId=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;const input=document.getElementById(inputId);const val=input.value.trim();if(!val)return;const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;const wrap=document.getElementById(wrapId);const span=document.createElement('span');span.className='tag-bubble';span.dataset.tag=val;span.textContent=val;span.onclick=function(){handleTagClick(this);};wrap.appendChild(span);input.value='';}
 
