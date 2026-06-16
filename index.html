@@ -574,6 +574,7 @@ if(container&&container.id==='ancient-tags-container'){
 }else{
   updateSummary();
 }
+}
 
     function addCustomTag(sectionId,subIdx){const inputId=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;const input=document.getElementById(inputId);const val=input.value.trim();if(!val)return;const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;const wrap=document.getElementById(wrapId);const span=document.createElement('span');span.className='tag-bubble';span.dataset.tag=val;span.textContent=val;span.onclick=function(){handleTagClick(this);};wrap.appendChild(span);input.value='';}
 
