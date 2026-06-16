@@ -207,7 +207,20 @@
   <div class="generate-actions"><button class="btn-generate" id="btn-gen-ancient" onclick="doGenerateAncient()">🚀 生成人设</button></div>
   <div class="result-box" id="ancient-result-box"><div class="result-header"><span class="result-title">📄 生成结果</span><span class="result-status" id="ancient-result-status"></span></div><div class="result-content" id="ancient-result-content"></div><div class="result-actions" id="ancient-result-actions" style="display:none;"><button class="btn-small" onclick="copyResult('ancient')">📋 复制</button><button class="btn-small" onclick="saveToArchive('ancient')">💾 存档</button><button class="btn-small" onclick="doGenerateAncient()">🔄 重新生成</button></div></div>
     </div>
-    <div class="page" id="page-cat-fantasy"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">⚔️ 西幻人设</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-fantasy" onchange="toggleUpload('char-fantasy')">关联到角色卡</label><div class="upload-area" id="upload-char-fantasy"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-fantasy" onchange="handleFileSelect('char-fantasy')"><div class="upload-file-name" id="file-char-fantasy-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-fantasy" onchange="toggleUpload('world-fantasy')">关联到世界书</label><div class="upload-area" id="upload-world-fantasy"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-fantasy" onchange="handleFileSelect('world-fantasy')"><div class="upload-file-name" id="file-world-fantasy-name"></div></div></div><div class="empty-state">功能开发中…敬请期待</div></div>
+    <div class="page" id="page-cat-fantasy"><div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">⚔️ 西幻人设</div></div><div class="section-box"><label class="checkbox-row"><input type="checkbox" id="check-char-fantasy" onchange="toggleUpload('char-fantasy')">关联到角色卡</label><div class="upload-area" id="upload-char-fantasy"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-fantasy" onchange="handleFileSelect('char-fantasy')"><div class="upload-file-name" id="file-char-fantasy-name"></div></div><label class="checkbox-row"><input type="checkbox" id="check-world-fantasy" onchange="toggleUpload('world-fantasy')">关联到世界书</label><div class="upload-area" id="upload-world-fantasy"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-fantasy" onchange="handleFileSelect('world-fantasy')"><div class="upload-file-name" id="file-world-fantasy-name"></div></div></div><div class="page" id="page-cat-fantasy">
+  <div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">⚔️ 西幻人设</div></div>
+  <div class="section-box">
+    <label class="checkbox-row"><input type="checkbox" id="check-char-fantasy" onchange="toggleUpload('char-fantasy')">关联到角色卡</label>
+    <div class="upload-area" id="upload-char-fantasy"><p>上传角色卡文件（支持 .json / .png）</p><input type="file" accept=".json,.png" id="file-char-fantasy" onchange="handleFileSelect('char-fantasy')"><div class="upload-file-name" id="file-char-fantasy-name"></div></div>
+    <label class="checkbox-row"><input type="checkbox" id="check-world-fantasy" onchange="toggleUpload('world-fantasy')">关联到世界书</label>
+    <div class="upload-area" id="upload-world-fantasy"><p>上传世界书文件（支持 .json）</p><input type="file" accept=".json" id="file-world-fantasy" onchange="handleFileSelect('world-fantasy')"><div class="upload-file-name" id="file-world-fantasy-name"></div></div>
+  </div>
+  <div id="fantasy-tags-container"></div>
+  <div class="summary-box"><div class="summary-title">⭐ 已选标签汇总</div><div class="summary-content" id="fantasy-summary"><span class="summary-empty">还没有选择任何标签…</span></div></div>
+  <div class="word-count-row"><span class="word-count-label">✨ 目标字数</span><input class="word-count-input" type="number" id="fantasy-word-count" value="1000" min="200" max="10000" step="100"><span class="word-count-hint">字</span></div>
+  <div class="generate-actions"><button class="btn-generate" id="btn-gen-fantasy" onclick="doGenerateFantasy()">🚀 生成人设</button></div>
+  <div class="result-box" id="fantasy-result-box"><div class="result-header"><span class="result-title">📄 生成结果</span><span class="result-status" id="fantasy-result-status"></span></div><div class="result-content" id="fantasy-result-content"></div><div class="result-actions" id="fantasy-result-actions" style="display:none;"><button class="btn-small" onclick="copyResult('fantasy')">📋 复制</button><button class="btn-small" onclick="saveToArchive('fantasy')">💾 存档</button><button class="btn-small" onclick="doGenerateFantasy()">🔄 重新生成</button></div></div>
+    </div>
     <div class="page" id="page-cat-polish">
   <div class="page-header"><button class="back-btn" onclick="navigateTo('page-generate')">返回</button><div class="page-title">✨ 现有人设润色</div></div>
 
@@ -553,12 +566,13 @@
 
     function handleTagClick(el){const wrap=el.parentElement;const type=wrap.dataset.type;if(type==='single'){const was=el.classList.contains('selected');wrap.querySelectorAll('.tag-bubble').forEach(b=>b.classList.remove('selected'));if(!was)el.classList.add('selected');}else if(type==='multi'){el.classList.toggle('selected');}else if(type==='three'){if(el.classList.contains('disliked')){el.classList.remove('disliked');}else if(el.classList.contains('liked')){el.classList.remove('liked');el.classList.add('disliked');}else{el.classList.add('liked');}}
     // 判断是哪个页面的标签，调用对应的汇总函数
-  const container=wrap.closest('#general-tags-container, #ancient-tags-container');
-  if(container&&container.id==='ancient-tags-container'){
-    updateAncientSummary();
-  }else{
-    updateSummary();
-  }
+  const container=wrap.closest('#general-tags-container, #ancient-tags-container, #fantasy-tags-container');
+if(container&&container.id==='ancient-tags-container'){
+  updateAncientSummary();
+}else if(container&&container.id==='fantasy-tags-container'){
+  updateFantasySummary();
+}else{
+  updateSummary();
 }
 
     function addCustomTag(sectionId,subIdx){const inputId=subIdx!==null?`add-${sectionId}-${subIdx}`:`add-${sectionId}`;const input=document.getElementById(inputId);const val=input.value.trim();if(!val)return;const wrapId=subIdx!==null?`wrap-${sectionId}-${subIdx}`:`wrap-${sectionId}`;const wrap=document.getElementById(wrapId);const span=document.createElement('span');span.className='tag-bubble';span.dataset.tag=val;span.textContent=val;span.onclick=function(){handleTagClick(this);};wrap.appendChild(span);input.value='';}
@@ -1136,7 +1150,284 @@ function renderAncientCustomSection(section){if(section.id==='anc-basic-info'){r
 function updateAncientSummary(){const parts=[];const name=document.getElementById('anc-name')?.value.trim();const nickname=document.getElementById('anc-nickname')?.value.trim();const gender=document.getElementById('anc-gender')?.value.trim();const age=document.getElementById('anc-age')?.value.trim();if(name)parts.push(`【姓名】${name}`);if(nickname)parts.push(`【外号】${nickname}`);if(gender)parts.push(`【性别】${gender}`);if(age)parts.push(`【年龄/骨龄】${age}`);const charInfo=document.getElementById('anc-char-info')?.value.trim();if(charInfo)parts.push(`【char信息】${charInfo}`);document.querySelectorAll('#ancient-tags-container .tag-wrap').forEach(wrap=>{const type=wrap.dataset.type;const selected=[];wrap.querySelectorAll('.tag-bubble').forEach(b=>{if(type==='three'){if(b.classList.contains('liked'))selected.push('👍'+b.dataset.tag);else if(b.classList.contains('disliked'))selected.push('👎'+b.dataset.tag);}else{if(b.classList.contains('selected'))selected.push(b.dataset.tag);}});if(selected.length){const sectionEl=wrap.closest('.tag-section');const titleEl=sectionEl?.querySelector('.tag-section-title');const sectionTitle=titleEl?titleEl.textContent:'';let subTitle='';const prev=wrap.previousElementSibling;if(prev&&prev.classList.contains('tag-subsection-title'))subTitle=prev.textContent.replace(/（.*）/,'');const label=subTitle?`【${sectionTitle}-${subTitle}】`:`【${sectionTitle}】`;parts.push(`${label}${selected.join('、')}`);}});const summaryEl=document.getElementById('ancient-summary');if(!parts.length){summaryEl.innerHTML='<span class="summary-empty">还没有选择任何标签…</span>';}else{summaryEl.textContent=parts.join('\n');}}
 
 async function doGenerateAncient(){if(isGenerating){if(abortController)abortController.abort();isGenerating=false;const btn=document.getElementById('btn-gen-ancient');btn.textContent='🚀 生成人设';btn.style.background='';return;}const summaryEl=document.getElementById('ancient-summary');const summaryText=summaryEl.textContent;if(!summaryText||summaryText==='还没有选择任何标签…'){showToast('请先选择一些标签！');return;}const apiConfig=getApiConfig('text');if(!apiConfig||!apiConfig.url||!apiConfig.key){showToast('请先在 API设置 中配置文字API！');return;}const wordCount=document.getElementById('ancient-word-count')?.value||1000;const systemPrompt=localStorage.getItem('ucreate_prompt_text')||document.getElementById('text-prompt').value;const userMessage=`请根据以下用户选择的古风人设标签和设定，生成一份完整的古风角色人设。目标字数约${wordCount}字。\n\n用户选择的标签和信息如下：\n${summaryText}\n\n请基于以上信息，生成一份详细、生动、有层次感、充满古韵的角色人设。`;isGenerating=true;abortController=new AbortController();const btn=document.getElementById('btn-gen-ancient');btn.textContent='⏹ 停止生成';btn.style.background='#c53030';const resultBox=document.getElementById('ancient-result-box'),resultContent=document.getElementById('ancient-result-content'),resultStatus=document.getElementById('ancient-result-status'),resultActions=document.getElementById('ancient-result-actions');resultBox.classList.add('show');resultContent.textContent='';resultContent.classList.add('cursor-blink');resultStatus.textContent='生成中…';resultStatus.className='result-status generating';resultActions.style.display='none';setTimeout(()=>resultBox.scrollIntoView({behavior:'smooth',block:'start'}),100);try{const res=await fetch(apiConfig.url.replace(/\/+$/,'')+'/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiConfig.key,'Content-Type':'application/json'},body:JSON.stringify({model:apiConfig.model||'gpt-3.5-turbo',messages:[{role:'system',content:systemPrompt},{role:'user',content:userMessage}],stream:true,max_tokens:Math.max(2000,Math.round(wordCount*2))}),signal:abortController.signal});if(!res.ok)throw new Error('HTTP '+res.status+': '+(await res.text()).slice(0,200));const reader=res.body.getReader(),decoder=new TextDecoder();let fullText='',buffer='';while(true){const{done,value}=await reader.read();if(done)break;buffer+=decoder.decode(value,{stream:true});const lines=buffer.split('\n');buffer=lines.pop()||'';for(const line of lines){const trimmed=line.trim();if(!trimmed||trimmed==='data: [DONE]')continue;if(!trimmed.startsWith('data: '))continue;try{const json=JSON.parse(trimmed.slice(6));const delta=json.choices?.[0]?.delta?.content;if(delta){fullText+=delta;resultContent.textContent=fullText;resultContent.scrollTop=resultContent.scrollHeight;}}catch(e){}}}resultContent.classList.remove('cursor-blink');resultStatus.textContent=`生成完毕（约${fullText.length}字）`;resultStatus.className='result-status';resultActions.style.display='flex';}catch(err){resultContent.classList.remove('cursor-blink');if(err.name==='AbortError'){resultStatus.textContent='已停止';resultStatus.className='result-status';if(resultContent.textContent.length>0)resultActions.style.display='flex';}else{resultStatus.textContent='出错了';resultStatus.className='result-status';resultContent.textContent='布豪！生成报错了！\n\n错误信息：'+err.message+'\n\n请检查 API 设置后重试。';}}isGenerating=false;abortController=null;btn.textContent='🚀 生成人设';btn.style.background='';}
-loadApi('text');loadApi('img');loadPrompt('text');loadPrompt('img');renderArchives();renderGeneralTags();renderAncientTags();
+    // === FANTASY TAG DATA =====
+const fantasySections = [
+  {id:'fan-basic-info',title:'基础信息',type:'custom'},
+  {id:'fan-char-relation',title:'你好👋，char！',type:'custom'},
+  {id:'fan-era',title:'时代背景',hint:'单选',type:'single',tags:['创世神话纪元','诸神统治的黄金时代','泰坦巨神纪元','远古龙族霸权时代','精灵全盛时代','矮人地下王国鼎盛期','原初魔法纪元','神魔战争时代','英雄纪元','第一次黑暗时代','亡灵大瘟疫年代','精灵分裂与日落时代','人类崛起纪元','大一统帝国时代','魔法学院建立时代','圣战与宗教审判时代','大航海与殖民扩张时代','海盗黄金年代','蒸汽与奥术融合时代','工业革命与魔法衰落期','诸神沉默/信仰崩塌时代','混沌裂隙入侵时代','亡灵天灾纪元','兽人部落大迁徙时代','吸血鬼暗夜王朝时代','猎巫狂潮年代','禁魔令与魔法黑市时代','末日天灾降临时代','废土后末日重建时代','星辰纪元/新神话开端']},
+  {id:'fan-family',title:'原生家庭/身份背景',hint:'可多选',type:'multi',tags:['王室正统继承人','王室私生子','没落贵族末裔','世袭公爵世家','骑士望族之后','富商巨贾之子','佃农/贫农子女','铁匠世家传人','孤儿院弃婴','街头流浪儿','盗贼公会家族','佣兵团团长之子','纯血魔法世家','混血半精灵','流亡王族遗孤','神殿收养的圣婴','猎户/守林人之子','酒馆老板家孩子','奴隶/角斗士出身','博学士/学者世家','炼金术师世家','草药师/药剂师家庭','海盗/水手之子女','矿工世家','矮人炉火氏族后裔','精灵王庭旁系贵族','狼人氏族血统','吸血鬼血族世家','龙裔血脉后裔','被诅咒血脉继承者','人造生命/炼金造物','半神/神裔血脉','恶魔混血/魔裔','流浪马戏团/吉普赛部落','守墓人世家','刽子手世家','灯塔守望者子女','荒野隐士抚养','德鲁伊教团抚养','修道院僧侣收养','边境戍卫世家','走私犯/黑市贩子之家','宫廷弄臣艺人世家','御厨/宫廷匠人世家','探险家/制图师世家','村中草药女巫之子','战俘/被征服民族后裔','封印守护者一族','失忆者/身份不明者']},
+  {id:'fan-appearance',title:'外貌气质',hint:'可多选',type:'multi',tags:['冷峻如刀锋','温润如玉','沧桑粗粝','病态苍白','野性桀骜','圣洁不可侵犯','阴鸷邪魅','阳光俊朗','清冷如月光','妖冶惑人','憨厚壮实','精瘦干练','魁梧如铁塔','纤弱如柳','不怒自威','颓废潦倒','凛然正气','鬼气森森','高贵优雅','粗犷豪迈','精灵般的空灵','石雕般坚毅','老树般的沧桑','鹰隼般锐利','慵懒散漫','市侩精明','书卷文弱','伤痕累累','风霜满面','油滑世故','丰腴富态','矮小精悍','修长挺拔','艳光四射','天真稚气','暮气沉沉','英姿飒爽','半透明飘渺']},
+  {id:'fan-haircolor',title:'发色',hint:'单选',type:'single',tags:['墨黑','银白','雪白','铂金','亚麻金','蜂蜜金','麦秸金','红铜','火红','酒红','深褐','栗棕','浅棕','灰白','铁灰','炭灰','冰蓝','深蓝','墨绿','翠绿','紫罗兰','深紫','银蓝','霜白','玫瑰金','橘红','乌木黑','蓝黑','白金色渐变','灰金掺杂','骨白','夜幕蓝','血迹干涸般的暗红','鸦羽黑','月光银','苔绿','烟灰','熔岩般的赤金','珍珠白','靛蓝']},
+  {id:'fan-hairstyle',title:'发型',hint:'可多选',type:'multi',tags:['及腰长直发','利落短发','波浪卷长披发','高马尾','低马尾','双麻花辫','单侧麻花辫','盘发髻','战斧式削短发','光头','莫西干式竖发','半扎发','编入符文的细辫','凌乱碎发','大背头','齐耳短发','鬓角编发','刘海遮眼','中分长直','高盘贵族髻','松散发髻插羽毛','剃半边留半边','满头细密脏辫','额前束一绺','精灵式后梳','短卷蓬松','狼尾发型','修女包头巾覆盖','兜帽常年不摘','发箍束额','金属发环束发','骨簪盘发','藤蔓编入发间','剃光只留顶髻','湿发贴面','双角髻','侧梳大波浪','编入铃铛的细辫','参差不齐自割短发','王冠束发']},
+  {id:'fan-eyecolor',title:'瞳色',hint:'单选',type:'single',tags:['深海蓝','翡翠绿','琥珀金','血瞳红','深渊黑','银灰','冰蓝','紫水晶','熔岩橙','暗金','天蓝','苔绿','灰蓝','漆黑无白','异色瞳一蓝一绿','猫瞳竖金','纯白无瞳孔','蛇瞳暗绿','狼瞳黄褐','龙瞳竖金','亡灵幽绿鬼火','深紫近黑','熔铁般的赤金','宝石红','雾灰','湖绿','鸦青','暗紫','蜜色','苍白冰灰','星光银','浑浊乳白','漩涡般的紫蓝','黑底赤环','金底竖黑瞳','琥珀带碎金','深褐近黑','碧色如洗','暗红如凝','亮橘猫眼']},
+  {id:'fan-clothing',title:'衣着风格',hint:'可多选',type:'multi',tags:['陈旧锁子甲','铮亮骑士板甲','漆黑斗篷','法师长袍缀星纹','皮质冒险者束装','精灵银叶轻甲','牧师白袍金纹','刺客暗色紧身皮甲','盗贼多口袋短衣','蛮族兽皮毛毡','贵族丝绸华服','皇室刺绣长袍','海盗船长大衣','农家粗麻布衣','铁匠皮围裙','德鲁伊苔蔓披风','猎魔人银链皮甲','吸血鬼暗红丝绒礼服','狼人穿旧皮背心','术士符文缠带裹身','修女黑袍白头巾','僧侣麻绳束腰袍','角斗士裸身皮带甲','宫廷舞会礼服','旅行者磨损斗篷','矮人锁甲配宝石腰带','精灵轻盈纱衣','雇佣兵混搭铠甲','死灵法师骨饰长袍','游侠绿褐伪装披风','圣骑士白底金十字罩袍','炼金术师污渍皮围裙','酒馆侍女束腰长裙','边境守夜人厚呢大衣','吟游诗人色彩鲜艳短衣','沙漠民族裹身长袍','海盗水手条纹衫','国王加冕貂皮长袍','乞丐百衲衣','龙骑士鳞甲披风']},
+  {id:'fan-personality',title:'性格特征',hint:'可多选',type:'multi',tags:['刚正不阿','阴险狡诈','豪爽仗义','孤僻寡言','傲慢自负','谦逊温和','贪婪成性','慈悲为怀','暴戾嗜血','怯懦胆小','坚毅如铁','优柔寡断','狡猾如狐','天真单纯','愤世嫉俗','乐天豁达','偏执狂热','冷漠疏离','忠诚不二','反复无常','正直古板','放荡不羁','多疑猜忌','大智若愚','野心勃勃','与世无争','毒舌刻薄','敦厚老实','疯癫狂乱','心机深沉','热血冲动','冷酷无情','温顺柔弱','桀骜难驯','隐忍克制','好大喜功','悲观厌世','好奇如猫','懒惰散漫','睚眦必报']},
+  {id:'fan-ability',title:'能力',hint:'可多选',type:'multi',tags:['剑术专精','骑术','重甲格斗','双持武器','弓箭射击','弩机操作','飞刀投掷','长柄武器','钝器猛击','盾牌防御','徒手格斗','潜行隐匿','暗杀术','开锁拆陷阱','偷窃扒窃','毒药调配','陷阱制作','追踪与反追踪','野外生存','草药辨识','急救包扎','铁匠锻造','武器附魔','护甲铸造','炼金术','药剂调配','魔法阵铭刻','符文雕刻','卷轴抄写','元素魔法—火','元素魔法—水','元素魔法—风','元素魔法—土','元素魔法—雷','元素魔法—冰','光系神圣魔法','暗影魔法','死灵术','血魔法','召唤术','契约魔法','幻术','变形术','时空魔法','精神控制','预言占卜','治愈术','诅咒与解咒','结界布置','传送术','魔力感知','魔力隐匿','龙语魔法','恶魔学','自然德鲁伊之力','兽化变形','亡灵操控','魅惑术','圣歌咏唱','符文锻造']},
+  {id:'fan-residence',title:'住所',type:'multi-sub',subs:[
+    {title:'住所类型（单选）',type:'single',tags:['城堡主塔','贵族庄园','骑士封地庄园','皇家宫殿','森林树屋','精灵树冠宫殿','矮人山体要塞','地下矮人厅堂','洞穴石窟','湖畔木屋','密林树洞','高塔法师塔','浮空魔法塔','修道院僧房','神殿祭司室','茅草农舍','村镇木石屋','酒馆二楼客房','马厩阁楼','废弃教堂改居','墓地守墓人小屋','风车磨坊','灯塔','海盗船船舱','河上船屋','悬崖凿壁居所','帐篷皮毡营帐','马车篷车','地下墓穴改建','废墟遗迹藏身处','炼金工坊附居','铁匠铺后院','商队旅店','温泉石洞','菌菇洞穴','冰屋雪堡','巨兽骸骨改建棚屋','藤蔓包裹的活树屋','浮岛飞石居','次元裂缝中半位面居所']},
+    {title:'装修风格（单选）',type:'single',tags:['中世纪粗石墙','哥特式尖拱肋顶','都铎式深色木梁白墙','巴洛克金碧浮雕','罗曼式厚重圆拱','维京长屋风格','精灵流线型自然纹','矮人几何石刻金镶','暗黑城堡阴森风','炼金术师标本瓶罐风','猎人战利品标本墙','挂毯织锦壁画','烛火吊灯铁艺','彩色玻璃花窗','兽骨图腾原始风','藤蔓苔藓自然共生','魔法符文刻墙','星象穹顶天花板','盔甲武器陈列墙','书架通天学者风','羊皮纸堆叠卷宗风','药剂架琳琅满目风','猫头鹰与魔宠栖息风','水晶矿物簇装饰','干枯玫瑰暗色浪漫','蜘蛛网尘封古旧感','金库钱币堆积感','航海罗盘海图风','异域沙漠挂毯风','石棺与骨灰瓮装饰','铁链刑具地牢风','木桶酒窖粗犷风','熏黑壁炉乡村风','镶嵌象牙螺钿精工','悬浮魔法灯照明','永冻冰晶装饰','熔岩裂缝红光映照','虚空般的暗幕墙壁','活木生长成家具','镜面迷宫幻术风']},
+    {title:'特殊设施（可多选）',type:'multi',tags:['魔法传送阵','炼金术实验室','附魔锻造台','星象观测高台','地下密道暗门','藏宝密室保险库','禁书封印书库','召唤法阵绘制室','药剂研制台','地牢刑讯室','酒窖藏酒洞','温泉浴池','护城河吊桥机关','自动魔像守卫','水晶球预言室','灵魂束缚封印室','元素池充能台','飞行坐骑塔台','吊桥/升降机关','陷阱机关走廊','魔法警报结界','次元储物空间','活体植物防御藤','龙骨陈列厅','血族休眠石棺','狼人月圆禁闭室','冬眠地窖','镜像传送镜厅','魔力泉眼','虚空冥想室','卷轴抄写室','标本奇兽陈列廊','武器附魔保养室','祈祷圣坛','亡灵缚灵阵','时光减速静室','元素仆从巢穴','毒物栽培温室','秘银保险匣','符文石阵传送枢纽']}
+  ]},
+  {id:'fan-wardrobe',title:'衣帽间',type:'multi-sub',subs:[
+    {title:'套装（可多选）',type:'multi',tags:['圣骑士银白战铠套装','暗夜刺客皮革束装','大魔导师星纹法袍','精灵游侠绿叶轻甲','亡灵法师骨饰黑袍','吸血鬼暗红丝绒礼服','狼人狂战士兽皮装','龙骑士龙鳞铠甲','神殿祭司金边白袍','炼金术师污渍皮围裙装','海盗船长双排扣大衣','赏金猎人混搭皮甲','佣兵团锁甲罩袍','修女黑袍白头巾装','德鲁伊藤甲苔衣','宫廷贵族锦绣华服','酒馆侍女束腰蓬裙','矮人重装步兵板甲','半精灵旅行者磨损斗篷装','圣少女祈愿白纱裙','角斗士裸身皮带锁甲','猎魔人银链黑皮装','边境游侠绿褐迷彩','暗夜精灵暗紫紧身衣','女巫暗色长裙斗篷','吟游诗人彩衣羽毛帽','沙漠民族裹身长袍','冰原战士白毛皮裘','沼地巫医骨饰麻衣','火焰术士红金长袍','水元素使蓝纱流苏装','雷霆战士暗蓝钢甲','森林女神祭祀花藤长裙','墓地守夜人厚呢黑氅','矮人符文工匠金线皮围','地牢狱卒铁环锁衣','盗贼公会多袋夜行衣','王族加冕貂皮金丝袍','森林妖精薄纱蝶翼装','战地军医血迹帆布围裙']},
+    {title:'装饰（可多选）',type:'multi',tags:['秘银项链','龙牙吊坠','魔法水晶耳坠','金丝额冠','精灵银叶头环','荆棘铁王冠','红宝石权杖徽章','乌鸦羽饰肩甲','狼头皮帽','独角兽角簪','龙鳞护腕','秘法戒指','血石封印戒','骨雕手镯','符文石手链','金丝单边眼镜','暗色蕾丝面纱','半脸金属面具','牧师圣徽胸针','家族纹章披风扣','眼罩黑皮革','兽牙穿绳项链','羽毛耳饰','蛇骨腰链','月长石眉心坠','银铃脚链','魔法卷轴筒背带','镶嵌宝石腰带','精灵水晶护符','暗影兜帽','玫瑰花饰发夹','乌鸦标本肩饰','金线刺绣臂环','铃铛发绳','骨质护喉','蜘蛛银饰胸针','泪滴珍珠耳环','锁子甲头巾','火焰纹章护手','梦境捕手挂坠']},
+    {title:'妆容（可多选）',type:'multi',tags:['素面无妆','苍白病态底妆','战纹三道横线','精灵月光微光肌','血族暗红唇色','烟熏黑炭眼周','金色神纹额间','德鲁伊藤蔓面绘','蛮族靛蓝战绘','术士符文刻面','暗夜紫黑唇','祭司白粉圣洁妆','宫廷贵妇白铅粉','盗贼夜行炭黑涂面','亡灵灰败枯槁妆','烈焰红唇冶艳妆','金粉颧骨高光','精灵银粉眼影','血色泪痕妆','疤痕刻意暴露','黑泪痣单点','暗红眼线拉长','眉心竖瞳绘制','角斗士血涂战纹','龙裔鳞片金粉勾边','妖精星点雀斑闪粉','玫瑰胭脂腮红','哥特式全黑唇','白银睫毛染霜','狼人野生粗眉加深','吸血鬼无血色透青','金箔贴面碎片','紫水晶粉末眼影','荆棘纹身面绘','凤凰火焰纹','月光石研磨高光','苦行僧灰烬涂额','毒药师暗绿唇色','海妖珠光幻彩','地底族苍白荧光']},
+    {title:'鞋子（可多选）',type:'multi',tags:['骑士铁靴','皮制冒险者短靴','精灵软底便鞋','法师布面软靴','刺客无声皮靴','尖头贵族皮鞋','矮人钢头重靴','高跟鞋宫廷礼鞋','木底草编凉鞋','角斗士绑带凉鞋','猎人鹿皮长靴','海盗折叠长靴','修女黑色平底鞋','铁匠厚底防火靴','马蹄铁掌战靴','德鲁伊苔藓裹脚鞋','雪地毛皮靴','沙漠弯头软皮靴','锁甲护胫靴','钉刺攀岩靴','玻璃舞鞋水晶跟','乌鸦羽饰短靴','龙骨鳞片战靴','秘银镶边礼靴','防水鱼皮水手靴','藤蔓缠绕精灵高靴','马刺骑士靴','毡毛冬靴','赤脚铜环趾套','铁链缠足囚鞋','木屐僧侣鞋','附魔疾风靴','绒毛内衬飞行靴','银扣带黑皮靴','草绳编织沼泽靴','符文刻底传送靴','狼人利爪露趾靴','骨片拼缝萨满靴','暗色天鹅绒便鞋','元素抗性镀层靴']},
+    {title:'美甲（可多选）',type:'multi',tags:['素甲无饰','暗黑哥特纯黑甲','血红尖甲','金粉描边甲','精灵银白月牙甲','符文微雕刻甲','龙鳞纹浮雕甲','碎钻星尘甲','暗紫渐变甲','骨白色哑光甲','金属尖爪套','玫瑰金镜面甲','翡翠绿猫眼甲','荆棘藤蔓彩绘甲','火焰渐变琉璃甲','蓝宝石粉末甲','乌鸦羽毛镶嵌甲','水银流动质感甲','紫水晶簇立体甲','亡灵石灰色裂纹甲','金丝掐花宫廷甲','蛛网暗纹甲','独角兽偏光幻彩甲','毒液般的碧绿荧光甲','暗红如凝血甲','冰晶棱面甲','熔岩龟裂透光甲','精灵叶脉拓印甲','占星星图甲','白银拉丝工艺甲','黑色蕾丝贴花甲','牙齿碎骨拼贴甲','月光石晕彩甲','锈铁般粗糙甲','蛇鳞细密纹甲','纯金箔全包甲','乳白珍珠母贝甲','元素符号烙印甲','被封印的发光咒文甲','天然磨圆无色甲']},
+    {title:'季节适配（可多选）',type:'multi',tags:['【春】精灵轻纱花瓣裙','【春】德鲁伊藤蔓新叶披肩','【春】春祭花冠','【春】细雨防潮油布斗篷','【春】浅绿薄呢短衣','【春】花籽播种腰带袋','【春】防花粉面纱','【春】精灵春歌轻靴','【春】蝴蝶翼饰披帛','【春】初生羊羔皮软坎肩','【春】樱草色亚麻长裙','【春】春分金线绣袍','【春】嫩芽编结手环','【春】花露收集瓶挂饰','【春】踏青软底编织鞋','【春】精灵新绿染布衣','【春】春猎兔皮护腕','【春】花神祭白麻素衣','【春】融雪后泥泞路钉靴','【春】春风信使羽饰帽','【夏】亚麻透气短衫','【夏】草编宽檐遮阳帽','【夏】沙漠白棉裹身袍','【夏】海风轻纱披肩','【夏】短裤皮质凉鞋','【夏】吸汗麻布头巾','【夏】防暑冰晶吊坠','【夏】轻量锁甲背心','【夏】海滨鱼皮凉鞋','【夏】麦秸编结遮阳斗笠','【夏】薄纱防晒面罩','【夏】夏日祭烟花纹浴衣','【夏】汗水耐腐蚀皮护腕','【夏】透气藤甲','【夏】降温附魔项圈','【夏】夜风短披肩','【夏】沙滩赤足脚链','【夏】骑士夏季轻铠','【夏】溪涧涉水皮裤','【夏】蝉翼薄纱舞衣','【秋】猎装厚呢外套','【秋】枫叶色羊毛斗篷','【秋】秋收麦穗束腰绳','【秋】狐狸皮围脖','【秋】棕褐皮革长靴','【秋】防风油蜡帆布衣','【秋】秋猎鹿皮手套','【秋】榛果项链','【秋】深红浆果染唇','【秋】囤积之月厚毡帽','【秋】落叶迷彩游侠披风','【秋】陈酿苹果酒皮囊','【秋】灯芯绒马裤','【秋】秋分丰收祭金麦冠','【秋】磨砂皮短靴','【秋】松鼠毛内衬兜帽','【秋】雾雨防潮油布包','【秋】柴刀樵夫皮装','【秋】晚收葡萄紫染长袍','【秋】候鸟羽饰迁徙斗篷','【冬】厚毛皮大氅','【冬】熊皮风雪帽','【冬】羊毛内衬锁甲','【冬】雪地防盲黑眼罩','【冬】冰原狼皮长靴','【冬】双层针织手套','【冬】永冻附魔抗寒披风','【冬】炉火炭灰暖手炉','【冬】冰钓皮裤','【冬】长明火把腰挂','【冬】深冬祭白狐裘袍','【冬】雪鞋宽底防陷靴','【冬】冻原防风面罩','【冬】热麦酒保温皮囊','【冬】狼群毛皮拼接毯衣','【冬】冰棱为饰水晶冠','【冬】壁炉灰抹额抗寒妆','【冬】雪橇驯鹿皮鞍','【冬】霜雪节银白礼服','【冬】巨魔皮厚实冬铠']}
+  ]},
+  {id:'fan-relationships',title:'人际关系',type:'multi-sub',subs:[
+    {title:'父亲（可多选）',type:'multi',tags:['沉默寡言的退役骑士','酗酒的落魄铁匠','严厉古板的伯爵','失踪的传奇冒险者','被诅咒化为石像','温柔却病弱的学者','战死沙场的圣骑士','背叛王国的流亡者','偏执的炼金术师','隐匿身份的龙裔','独臂的退伍老兵','疯癫的老预言家','刻薄吝啬的商人','被转化为亡灵却保留意识','浪荡不羁的吟游诗人','失踪前留下神秘遗物','虔诚到近乎狂信的神官','野心勃勃的篡位者','被吸血鬼感染的父亲','守护封印一族的族长','酒馆里吹牛的退役佣兵','与恶魔交易的堕落者','亲手锻造家族传甲的铁匠','从未谋面的精灵生父','被囚禁在敌国的前将军','慈爱但过度保护的老父亲','常年航海不归的船长','教会孤儿院的老院长','曾是盗贼公会的传奇大盗','隐姓埋名的旧王朝遗臣','牺牲自己封印魔物的法师','以狩猎怪物为业的猎魔人','沉迷古籍不问世事的博学士','身负世仇的末代骑士','偷学了禁术的前学院导师','用命换回孩子的角斗士','曾是龙骑士坐骑已殒落','冷血无情的杀手组织首领','改邪归正的前死灵法师','被狼人咬伤后在月圆之夜消失']},
+    {title:'母亲（可多选）',type:'multi',tags:['温柔病弱的贵族夫人','在瘟疫中早逝','隐姓埋名的前女巫','圣殿的女祭司','为保护孩子被烧死的女巫','精灵族流落人间的公主','严厉坚强的铁匠寡妇','疯癫却偶尔说出预言','曾是冒险者公会的传奇','生育时难产离世','被吸血鬼转化的母系血族','精明能干的商队女主人','慈祥的修道院嬷嬷','常年以泪洗面的废后','用草药救人的村中女巫','曾是盗贼公会的女盗贼','留下一本加密日记便失踪','被恶魔蛊惑的堕落者','血统纯正的龙裔之母','因诅咒变成野兽形态','曾是宫廷首席女官','冷漠疏离的贵族继母','在战争中沦为奴隶的前王女','亲手教孩子剑术的女骑士','被诬陷通奸而处决','以歌声治愈伤者的海妖混血','默默守护家族的德鲁伊','死在火刑柱上的异教徒','以纺织维持家计的盲女','曾是佣兵团唯一的女性队长','产下孩子后化为树灵','痴迷炼金术忽视家庭的学者','善良但软弱的农家妇女','在月圆之夜神秘失踪','冰天雪地里冻死前抱紧婴儿','以血喂养孩子的吸血鬼母亲','被时间魔法永远困在另一时代','潜伏于人间的堕天使','曾是神殿圣女后还俗私奔','为救全家献祭自我的女术士']},
+    {title:'兄弟姐妹（可多选）',type:'multi',tags:['继承家业的稳重长兄','叛逆出走的二哥','被宠坏的小弟','代替自己成为祭品的姐姐','天生残疾却意志坚强的妹妹','被送去神殿修行的兄长','沦落为盗贼的弟弟','比自己更受宠的长姐','双胞胎兄弟有心灵感应','被过继给贵族家的妹妹','在战场上失踪的哥哥','被卖给富商为奴的姐姐','同父异母彼此敌视的兄长','自幼分离的孪生姐妹','被培养成刺客的幼弟','痴迷魔法离家求学的姐姐','残疾卧床却洞察一切的哥哥','被父亲逐出家门的二哥','沦为乞丐但消息灵通的弟弟','嫁给仇家联姻的姐姐','表面和睦暗中嫉妒的长姐','比自己更像继承人的妹妹','被恶魔附身的双胞胎兄弟','嗜赌败光家产的兄长','女扮男装参军的姐姐','在酒馆做侍女的妹妹','以为已死却突然出现的弟弟','自幼被当成仆人的庶出兄长','甘愿成为自己影子的姐姐','是狼人却在月圆保护家人','作为人质扣押在敌国的弟弟','被神选中成为先知的长兄','聪明绝顶但傲慢自负的妹妹','替自己顶罪入狱的哥哥','姐妹俩爱上同一个人的姐姐','天赋异禀却早夭的弟弟','与精灵私奔的姐姐','被诅咒永远不能说真话的哥哥','改信异教与家庭决裂的弟弟','偷走家族遗产跑路的败家子']},
+    {title:'好友/死党/好哥们/闺蜜（等等）（可多选）',type:'multi',tags:['酒馆里永远赊账的雇佣兵','忠厚老实的铁匠学徒','嘴贱但关键时刻靠得住','同为孤儿院出身的义兄弟','精灵族中第一个接纳自己的人','爱吹牛的冒险者搭档','偷偷教你剑术的马厩伙计','从小一起长大的邻居女孩','总是惹麻烦让你善后的闯祸精','在狱中认识的生死之交','表面花心实则重情重义的吟游诗人','沉默寡言但剑术高超的旅伴','偷过你钱包却还回来还交上朋友','酒量比你大三倍的矮人哥们','从仇敌变成挚友的异族','替你挨过一刀的发小','醉心魔法实验总炸实验室的法师','唯一知道你真面目的闺蜜','总拉你去冒险的半身人','教团里偷偷递食物给你的见习修女','没钱时总会借你的商人朋友','欠你一条命的被救者','誓约同生共死的战友','与你交换秘密最多的青梅竹马','帮你伪造身份的文书伪造师','永远乐观到让人烦的同伴','在你落魄时唯一收留你的人','吵吵闹闹像猫狗却分不开','擅长追踪帮你找过失踪亲人','常年在酒馆给你留座位的老板','从小订婚但处成兄妹的异性发小','在战场上替你挡箭的战友','看似柔弱但关键时最勇敢的闺蜜','曾经背叛过你后又回来的赎罪者','教你识字的佣兵团老前辈','为你提供情报的黑市线人','什么都会修的发明天才','在森林里救过你的猎户','和你一起被逐出师门的同门','从各自故乡逃出来的流亡者']},
+    {title:'讨厌的人（可多选）',type:'multi',tags:['陷害你入狱的伪证人','抢走你初恋的贵族纨绔','总是克扣赏金的公会主管','当面一套背后一套的同僚','仗势欺人的城门守卫长','嘲笑你出身的傲慢贵族小姐','从不正眼看你的神殿主教','用黑魔法监视你的对头','欠钱不还还倒打一耙的赖皮','窃取你战功的上级军官','在酒馆总找你麻烦的地痞','嫉妒你才华的同门师兄','反复背叛的前搭档','写信诬告你的远亲','占着你家祖宅不还的远房','在你落难时落井下石的旧友','压榨佃农的庄园管家','总是放狗咬你的邻村地主','抢走你任务目标的赏金猎人','在神殿前公开羞辱你的祭司','暗中下毒却假装亲近的仆人','把你当替罪羊推出去的前队长','贪墨你抚恤金的军需官','曾经是你朋友却成了叛徒','靠谄媚上位的小人','屡次骚扰你家人的地头蛇','在议会中处处针对你的对手','毁掉你导师名誉的学者','买通法官判你败诉的仇家','总在你面前炫耀优越的旧同学','指认你是异端的狂热信徒','把你当实验对象的前导师','抢占你功劳发表论文的同僚','在舞会上公然羞辱你的贵族','扼杀你晋升机会的上司','骗走你积蓄的假商人','散布谣言毁你名声的邻居','逼你母亲改嫁的家族长辈','把你遗物销毁的仇家','看到你倒霉就开心的死对头']}
+  ]},
+  {id:'fan-pet',title:'宠物',type:'multi-sub',subs:[
+    {title:'大类（可多选）',type:'multi',tags:['魔宠黑猫','幼年龙崽','狮鹫幼兽','凤凰雏鸟','独角兽幼驹','狼崽','猎鹰','猫头鹰信使','渡鸦','小恶魔','元素精灵','史莱姆宠物','狐火妖狐','石化蜥蜴幼体','月光兔','暗影豹幼崽','飞马驹','三头犬幼犬','奇美拉幼体','树精苗','梦魇马驹','水元素幼体','风灵鸟','藤蔓幼蛇','幽灵猫','光羽雀','龙蝇','岩龟','冰晶幼蜥','熔岩蝾螈','双足飞龙幼崽','蘑菇精','雷鸟雏鹰','暗鸦','宝石甲虫','银鬃战马','九尾猫','水獭水灵','荆棘猎犬','星尘蝶']},
+    {title:'体型特征（可多选）',type:'multi',tags:['巴掌大小可藏于口袋','半人高肩齐腰','拳头大小立于肩头','成年牛马般可骑乘','蜷缩如毛球','展开翅翼遮天蔽日','细长如蛇缠绕手臂','圆滚滚几乎无四肢','骨瘦如柴却敏捷轻盈','蓬松毛量膨胀如云','纤细如筷子四条长腿','矮壮敦实四条短腿','尾长是身体的两倍','鳞片紧密如锁甲','羽毛流光溢彩拖尾','通体透明可见内脏','甲壳坚硬如盾牌','软若无骨变形随意','巨型但温顺如山','翅展三米可载人滑翔','仅拇指大藏在耳后','直立行走类人形','绒毛蓬松大到看不见眼睛','身形修长如弯刀','龟甲布满古老符文','触角细长闪烁荧光','多足爬行速度极快','浑身覆盖冰晶棱刺','毛色随情绪变化','头生独角螺旋纹','四个翅膀薄如蝉翼','嘴巴可裂至颈部','利爪可撕开铁甲','足底肉垫落地无声','布满鳞片的鱼尾','体态臃肿行动缓慢但力大','通体漆黑与暗影融为一体','不断掉落的星尘碎屑','蝠翼膜薄可折叠收起','燃烧鬃毛却不伤本体']},
+    {title:'性格特征（可多选）',type:'multi',tags:['忠诚至死不渝','高冷傲慢不轻易亲近','黏人如胶片刻不离','贪吃永远喂不饱','懒散终日酣睡','顽劣捣蛋爱恶作剧','胆小易惊躲进主人衣襟','好斗逞勇挑战任何生物','温顺如羔羊从不动怒','嫉妒心强排斥其他宠物','聪明通人性似能读心','傻憨迟钝反应慢半拍','护主心切敢挑战巨兽','傲娇表面不理暗地关注','好奇心旺盛什么都碰','孤僻不喜其他生物靠近','嗜睡白天从不醒夜间活跃','喜欢偷窃亮闪闪的小物件','记仇报复心极强','对陌生人极度警惕','喜欢唱歌或发出旋律声','安静如影子几乎无存在感','爱炫耀展示羽毛或鳞片','喜欢戏水见水就跳','对火焰着迷总往壁炉凑','挑食只吃特定食物','模仿主人动作走路姿势','喜欢藏在主人袍子里','喜欢被抚摸特定部位','紧张时会喷火或放电','对某种生物有天生的敌意','能感知主人情绪并回应','懒到连进食都需要喂','爱干净频繁梳理毛发','喜欢叼回奇怪的东西','独占欲强标记领地','喜欢爬到主人头顶蹲着','嫉妒时会发出幽怨叫声','感知危险时焦躁不安','总想逃跑去野外游荡']}
+  ]},
+  {id:'fan-scent',title:'调香室',type:'multi-sub',subs:[
+    {title:'体香（单选）',type:'single',tags:['雨后松林清冽气息','旧书页与墨香混合','铁与血残留的冷腥','皮革与马鞍的粗粝感','炉火与烟熏余味','青草碾碎后的鲜涩','海盐与风干的咸湿','蜂蜜与蜂蜡的甜暖','白玫瑰花瓣淡香','檀木与乳香的沉静','杏仁与香草微甜','檀香与老旧亚麻','雨水打在热石上的气息','雪松与冷杉的清冷','精灵与生俱来的花露淡香','龙裔身上若有若无的硫磺与金','亡灵附带的墓地紫罗兰幽香','德鲁伊身上的苔藓与湿土味','吸血鬼的血锈与玫瑰混合','狼人的野性皮毛麝香','矮人身上的麦酒与打铁焦炭味','海盗的朗姆酒与麻绳焦油味','神殿祭司的没药与洁净皂角','草药女巫的干艾草与洋甘菊','妖精的铃兰与露珠清甜','梦魇的暗夜罂粟幽冷','酒馆老板的发酵麦芽与橡木桶','旅人的尘土与薄荷叶凉','水精的睡莲与清泉矿感','凤凰血统的余烬温热与肉桂']},
+    {title:'香水（可多选）',type:'multi',tags:['龙血玫瑰精油','月光花与夜露冷香','精灵森林晨曦薄雾之水','黑琥珀与禁忌没药','人鱼泪珍珠粉凝香','吸血鬼伯爵的暗红丝绒','灰烬玫瑰与焚香','独角兽角磨粉调香','荆棘王座黑鸢尾','炼金术士的秘银蒸馏液','古堡石墙上的常春藤花','星尘与白檀','海盗船长的朗姆烟草','女巫的曼德拉草根酊','圣殿白百合与圣油','龙息余烬与黑胡椒','冰原雪莲冻露','月下曼陀罗与苦艾','矮人地心岩浆热石香','死灵法师的紫罗兰与骨粉','魅魔的暗欲麝香琥珀','妖精之翼磷粉闪光液','神殿乳香与没药圣膏','风元素收集的花粉之息','毒药师的黑夜茄与杏仁苦','湖中仙女的水百合清露','凤凰灰烬新生之香','梦境捕手的罂粟与洋甘菊','海盗掠夺来的东方异域香料','森林隐士的雨后苔藓冷杉']}
+  ]},
+  {id:'fan-voice',title:'调音室',type:'multi-sub',subs:[
+    {title:'嗓音特征（可多选）',type:'multi',tags:['沙哑如砂石磨砺','清亮如溪涧银铃','低沉浑厚如大提琴','空灵飘渺似从远方传来','粗粝如乌鸦聒噪','温润如玉暖人心','尖细如金属刮擦','柔和如催眠曲','破碎哽咽常带哭腔','磁性低沉令胸腔共鸣','含糊不清如含石子','冰冷机械毫无起伏','慵懒黏腻拖尾音','清脆利落如刀锋相击','低喘气声如暗夜私语','烟熏般的沧桑颗粒感','清澈稚嫩如少年','鼻音浓重似常年感冒','喉间隆隆如兽低吼','甜美如蜜糖过耳','阴冷湿滑如蛇行草丛','干涩如久旱河床','洪亮如钟响彻大厅','气若游丝命不久矣','金属回音如戴面具','如水波荡漾层层扩散','腐朽如枯叶碾碎','尖锐如蝙蝠超声波','绵软无力似病未愈','如风声穿峡谷的空旷感']},
+    {title:'音高（可多选）',type:'multi',tags:['深沉男低音','醇厚男中音','洪亮男高音','低沉女中音','柔美女高音','孩童般尖细','老者颤巍巍高音','粗重低音如熊咆','轻盈如鸟鸣的高频','介于男女声间的中性','刻意压低的假低音','拔高如尖叫的刺耳','低沉至几乎次声波','精灵般的清越偏高','矮人粗砺的偏低嗓','兽人咆哮式重低音','吸血鬼优雅偏中音','幽灵般忽高忽低不稳定','塞壬海妖勾魂的高音','巨龙化身人形的共振低音','半身人轻快略尖高音','狼人咆哮时炸裂高音','地底种族瓮声瓮气低音','天使般纯净无瑕的高音','恶魔扭曲的双音交叠','老巫婆刺耳如刮锅高音','巨人缓慢如打雷低音','妖精铃铛般跳跃高音','亡灵飘忽如穿堂风的变调','石像鬼粗粝如裂石的低吼']},
+    {title:'语速（可多选）',type:'multi',tags:['快如连珠炮不容插嘴','慢如老牛拉车字斟句酌','忽快忽慢情绪化跳跃','从容不迫如溪水缓流','急促慌乱上句赶下句','拖沓黏腻尾音拉长','干脆利落绝无废话','断断续续如机件卡顿','越来越快似失去控制','缓慢庄严如吟诵圣典','慵懒散漫话尾渐消','机关枪般密集扫射','停顿很久才吐出下句','均匀如节拍器的稳定','语速极快却字字清晰','话说到一半常陷入沉默','因口吃而时断时续','因愤怒语速逐渐加快','因紧张结结巴巴断字','居高临下的一字一顿','醉酒后含混拖长的语速','老年健忘般说半句忘半句','温和舒缓似怕惊扰听者','被诅咒后语速与呼吸同步变缓','紧张时语速加快至失声','杀手般字字精准如倒计时','话尾总是拖成气声消失','孩童般抢话的急促']},
+    {title:'语气（可多选）',type:'multi',tags:['冷硬如铁不容置疑','温柔似水哄孩童入睡','讥讽刻薄句句带刺','漫不经心似对一切无所谓','咄咄逼人步步紧逼','谄媚奉承低声下气','阴恻恻如蛇吐信','豪迈爽朗笑得坦荡','哀怨缠绵如诉如泣','居高临下的施恩口吻','疯癫狂乱逻辑跳跃','疲倦麻木如行尸走肉','热忱如火感染四周','威胁低沉杀意暗藏','玩世不恭调侃一切','虔诚如祷不敢高声','羞怯犹豫欲言又止','激昂如战前动员','阴阳怪气正话反说','冷漠疏离如隔冰墙','绝望如深渊望不到底','挑衅戏谑故意激怒','哽咽颤抖强压情绪','命令式如对奴隶说话','神秘莫测藏半句留半句','温和长者般循循善诱','咬牙切齿恨意入骨','空洞如灵魂已被抽走','诱哄如恶魔在耳边低语','狂喜过头几乎变形']}
+  ]},
+  {id:'fan-preferences',title:'喜恶偏好',hint:'点一下👍喜欢，点两下👎讨厌，再点取消',type:'three-state-sub',subs:[
+    {title:'食物',tags:['黑麦面包','烤野猪肋排','蜜汁烤鸡','炖兔肉汤','鹿肉馅饼','牛尾浓汤','蒜香烤羊腿','烟熏香肠','血肠黑布丁','盐腌鳕鱼','烤湖鳟','黄油煎河鱼','牡蛎浓汤','蟹肉杂烩','烤洋葱圈','炖芜菁甘蓝','奶油蘑菇汤','烤南瓜块','蜜渍胡萝卜','蒜蓉炒野菜','硬壳黑面包','白面包软瓤','蜂蜜燕麦饼','荞麦煎饼','矮人石炉黑麦包','精灵兰巴斯干粮','肉桂苹果派','蜂蜜烤梨','浆果奶油挞','葡萄干布丁','杏仁糖糕','牛奶米布丁','麦酒','蜂蜜酒','矮人烈酒','精灵花果酒','红葡萄酒','苹果酒','黑啤酒','羊奶','山羊奶酪','陈年干酪','烟熏乳酪','腌黄瓜','腌橄榄','盐渍猪肉','风干火腿','猎人炖菜一锅煮','行军豆糊','烤栗子','烤麻雀串','蘑菇炖鸡','洋葱浓汤','煎血肠配苹果','鹿肉干','烟熏鳗鱼','野菜荨麻汤','奶油韭葱汤','烤乳猪','野蜂蜜蜂巢']},
+    {title:'动物',tags:['龙','狮鹫','独角兽','梦魇马','双足飞龙','奇美拉','石化蜥蜴','鸡蛇兽','蝎尾狮','三头犬','地狱犬','巨狼芬里尔后裔','座狼','恐狼','巨鹰','雷鸟','凤凰','霜原猛犸','剑齿虎','洞穴巨熊','枭头熊','石化牛','人头狮身蝎尾兽','九头蛇','沼泽巨鳄','巨型蜘蛛','食人魔','巨魔','树精','森林人马','半羊人萨提尔','鹰身女妖','塞壬海妖','克拉肯巨鱿','海蛇','水马','独角鲸','巨甲虫','史莱姆','凝胶怪','拟态怪','幽灵','幽魂','石像鬼','沙虫','冰原蠕虫','巨蝠','暗影猫','月光鹿','巨龟']},
+    {title:'环境/天气',tags:['浓雾弥漫的沼泽','永夜森林','诅咒荒原','烈日灼烧的沙漠','暴风雪肆虐的冰原','熔岩流淌的火山带','精灵永春密林','凋零枯萎的灰烬之地','平静如镜的月光湖','雷鸣不止的风暴山脉','毒雾笼罩的瘴气谷','浮空岛屿群','地底荧光洞穴','被洪水淹没的废墟城','彩虹瀑布悬崖','荆棘丛生的睡美人城堡','漩涡暗礁海域','幻象叠生的迷雾迷宫','星辰极光下的冻土','酸雨腐蚀的废铁荒漠','鬼火漂浮的乱葬岗','开满血红花的诅咒田野','空间裂隙扭曲区','永昼圣光笼罩的山巅','黑云压城的亡灵天灾前兆','陨石坑形成的蓝晶湖','地底熔岩河洞窟','盐化结晶的白骨平原','花瓣永飘的风之谷','雷鸣电闪的浓积云砧','寂静到诡异的风止之森','冰火两重天的巨龙坟场','龙卷风挟裹的元素乱流','大雾锁海的海妖迷雾','彩虹横跨的双子瀑布','时停般的无风无息结界','焦土烽烟的古战场','噬人的流沙海','被藤蔓完全吞噬的巨树神殿','倒映天空的镜面盐湖']},
+    {title:'娱乐',tags:['骑士比武大会','射箭锦标赛','角斗场死斗','战马赛跑','猎鹰狩猎','皇家狩猎围场','矮人掰手腕大赛','麦酒畅饮赛','掷斧比赛','骰子赌博','纸牌赌局','三龙棋对弈','战棋推演','吟游诗人弹唱会','贵族假面舞会','丰收祭篝火舞','仲夏夜狂欢节','街头杂耍吞火表演','马戏团巡演','木偶戏','皮影戏','角斗竞猜押注','盗贼公会摸包比赛','谜语挑战赛','藏书室寻宝游戏','魔法学院法术对决表演','炼金术爆炸实验博彩','市集新奇物种展览','巨人遗迹探险团','古墓寻宝队','狼人追月夜奔','吸血鬼血宴交际','钓鱼大赛','冰雕展览','烟火魔法秀','化装游行','酒馆故事会','吹牛大赛','驯龙表演','占卜帐篷水晶球算命']},
+    {title:'音乐',tags:['鲁特琴弹唱','竖琴独奏','风笛战曲','矮人战鼓重击','精灵长笛轻吟','小提琴抒情','管风琴圣咏','吟游诗人叙事长歌','角斗场铜号齐鸣','凯尔特哨笛','羊皮手鼓','铁蹄踏击般的进行曲','木琴敲击','人声无伴奏合唱','号角狩猎调','巨钟教堂鸣响','精灵森林弦乐合奏','海盗水手号子','八音盒魔法旋律','龙鸣般的低音号角']}
+  ]},
+  {id:'fan-skills',title:'小技能',hint:'可多选',type:'multi',tags:['用燧石打火一次成功','匕首转花','硬币在指缝间翻滚','吹口哨模仿鸟鸣','用耳朵听锁簧弹片','徒手抓鱼','辨认足迹新旧','读唇语','快速编绳结','单手打鸡蛋','削木头雕小动物','鞣制小皮件','缝补伤口与衣物','用草叶吹出旋律','倒酒不洒一滴','黑暗中凭触觉装填弩箭','目测距离精准投石','闻出食物是否下毒','速记符号密文','指甲开瓶盖','从高处落地无声翻滚','舌打响指模仿马蹄声','驯服受惊的马','用影子判断时间','拔刀出鞘不发出声响','在人群中不被察觉地穿梭','用叉子削水果','扑克牌魔术戏法','在风暴中稳住火把']},
+  {id:'fan-habits',title:'小习惯',hint:'可多选',type:'multi',tags:['睡前磨刀','进门先扫视所有出口','说话时手指无意识敲桌面','咬拇指指甲','紧张时摸脖子上疤痕','写日记从不间断','喝任何液体前先闻一下','把银币在掌心抛接','坐下时总背靠墙','说话前先沉默两秒','用匕首削木屑发呆','半夜惊醒查门窗三次','脱下戒指反复摩挲','笑的时候从不发出声音','把食物切成等大碎块再吃','走路避开发声的地板缝','对蜡烛火焰自言自语','收集路上遇到的奇怪石头','雨天站在窗边发呆','写好的信总要重抄三遍','喝茶前先对着蒸汽深吸一口','噩梦中醒来立刻记在本子上','说话时不喜欢看人眼睛','每次出发前碰一下门框','独自吃饭时刀叉摆放整齐','洗完手必甩三下','睡前必读一页旧书','捋头发','每次战斗后清点箭矢','习惯性站在阴影里']},
+  {id:'fan-nsfw',title:'NSFWの性癖表现',hint:'可多选',type:'multi-sub',subs:[
+    {title:'种族特征',type:'multi',tags:['精灵耳','精灵耳尖敏感','吸血鬼獠牙','獠牙轻刺皮肤','魔角','魔角敏感','恶魔尾巴','尾巴尖端敏感','羽翼','蝠翼','龙角','龙尾','龙翼','龙舌','鳞片','人鱼鳞片','人鱼尾','狼耳','狼尾','兽耳','兽尾','半兽化','矮人粗壮体格','地精绿皮','暗精灵灰肤','天使光环','天使羽翼','堕天使黑翼','血族红瞳','血族苍白皮肤','魅魔淫纹','魅魔尾巴','魅魔角','梦魔','妖精翅膀','妖精体型','半精灵','半魔','半龙','混血']},
+    {title:'身份关系',type:'multi',tags:['骑士×王子','骑士×公主','圣骑士×堕骑士','勇者×魔王','勇者×魔王的部下','神官×信徒','神官×无信仰者','教皇×圣骑士','修女×神父','圣女×恶魔','祭司×祭品','国王×骑士','女王×侍卫','领主×领民','贵族×仆人','法师×学徒','法师×战士','炼金术师×实验体','药剂师×试药者','佣兵团长×团员','冒险者×队友','精灵王×人类','精灵×矮人','吸血鬼×血奴','吸血鬼×血仆','吸血鬼×猎人','狼人×伴侣','狼人×猎人','龙×祭品','龙×骑士','屠龙者×龙','神×信徒','神×凡人','被神选中的信徒','恶魔×契约者','魅魔×圣骑士','梦魔×纯洁者','死灵法师×尸体']},
+    {title:'魔法相关',type:'multi',tags:['魔力交融','魔力共振','魔力探入体内游走','魔力暴走时失控交合','魔力链接','魔法契约','契约印记','使魔契约','主从契约','灵魂绑定','灵魂共鸣','魔法阵束缚','魔法阵囚禁','魔法阵上的play','传送阵中途打断','元素感知过载','元素入体','火元素灼热体温升高','冰元素冰冷与体温反差','雷元素麻痹的酥麻感','治疗魔法滥用','治好了又弄伤','反复治疗反复受伤','诅咒','情欲诅咒','淫纹是诅咒烙印','魅惑魔法','魅惑术被解除后残留的欲望','催眠魔法','暗示魔法','变形术','变形术失误变成敏感体质','时间魔法','时间暂停为所欲为','时间回溯反复品尝第一次']},
+    {title:'场景地点',type:'multi',tags:['魔法塔','法师塔顶层密室','地下城','迷宫深处','神殿','神殿圣坛之上','教堂忏悔室','教堂长椅之下','修道院密室','城堡塔楼','城堡地牢','王座之间','浴室共浴','温泉','酒馆旅店','冒险者公会休息室','森林深处','月光下的精灵之森','湖畔水边','人鱼海湾','龙巢','龙的宝藏堆上','遗迹废墟','封印之地','异空间','结界内','镜像空间']},
+    {title:'道具器物',type:'multi',tags:['魔法锁链','魔力束缚环','奴隶项圈','魔法项圈','刻有魔纹的项圈','禁魔镣铐','封魔手铐','吸魔石','魔力抑制器','法杖','魔杖顶端用于开拓','魔法书','魔导书里的内容变成现实','魔法药水','媚药效果魔法版','变身药水','吐真剂吐露羞耻欲望','治疗药水','体力回复药水让深夜更持久','魔法阵纹身','淫纹由魔法阵烙印而成','魔力纹路蔓延在皮肤上','圣水淋身','圣水有催情副作用','圣油涂抹全身','触手魔法召唤','魔法触手','炼金傀儡','魔法人偶','魔法镜子展现对方最羞耻的样子']},
+    {title:'身体部位',type:'multi',tags:['精灵耳','被含住耳尖','耳尖抖个不停','吸血鬼獠牙','被獠牙轻刺脖颈的颤栗','魔角','握住魔角对方就软了','恶魔尾巴','尾巴缠住手腕或脚踝','羽翼','被羽毛拂过身体','羽翼包裹两人','翼根敏感被抚摸','龙尾缠腰','龙舌分叉探入','狼耳抖动暴露情绪','狼尾不受控制地摇晃','鳞片被逆着抚摸时的刺激','苍白皮肤上红痕格外醒目','青筋血管在苍白皮肤下清晰可见','伤痕累累的战士躯体','骑士常年握剑磨出的茧','法师的细嫩手指常年翻书']},
+    {title:'心理偏好',type:'multi',tags:['圣职者破戒','神官堕落','圣女被玷污','纯洁者被染指','圣骑士的信仰在欲望中动摇','信仰破裂的瞬间','高傲精灵向人类低头','傲慢者屈服','冷漠者动情','狂傲者求饶','被以下犯上','用敬语称呼对方的同时做最淫乱的事','一边称呼殿下一边弄到对方说不出话','忠诚骑士的侍奉变质为床笫侍奉','宣誓效忠变成了宣誓献上一切','骑士跪地宣誓时内心想着不能让主人知道的念头','信徒对神的亵渎之心','将神拉下神坛','被信仰的对象反过来被信仰者占有','恶魔诱惑圣职者成功后的餍足','魅魔引诱圣骑士结果自己反被攻略','血族支配欲','被初拥的占有','狼人标记伴侣的领地意识','龙的独占欲','把祭品变成自己的宝藏']},
+    {title:'玩法',type:'multi',tags:['魔力探入','魔力在体内进出搅动','契约纹身发光发烫时带来的快感','魔法阵束缚四肢悬空','冰魔法降低温度再被体温融化','火魔法让身体发烫敏感度提升','治疗魔法一直修复所以可以无休止地做','诅咒发作必须通过交合缓解','魅惑状态下主动求欢','催眠状态下被引导做出羞耻行为','时间暂停时被随意摆弄','时间暂停结束时瞬间涌上的感官','触手魔法召唤出的触手','触手捆绑加魔力探入','魔法道具远程遥控','魔偶傀儡play','圣水涂在敏感部位灼烧般的刺激','圣洁之物用在淫秽之事上的反差亵渎','忏悔室里的秘密','对着信仰对象做不可言说之事']},
+    {title:'药物与魔药',type:'multi',tags:['媚药','魔法春药','发情魔药','体力回复药水的副作用催情','魔力回复药水的副作用敏感度翻倍','吐真剂被迫坦白羞耻欲望','变形药水长出敏感部位','感知强化药剂让触觉翻倍','敏感度提升药剂','禁魔药水让对方暂时失去魔力任人摆布','解除魔药时魔力瞬间回流产生快感','血族的血含有催情成分','精灵的体液有致幻效果','龙的体液中带有魔力会让人上瘾','魅魔的体液本身就是媚药']},
+    {title:'身体反应',type:'multi',tags:['精灵耳尖泛红','耳尖抖得停不下来','吸血鬼獠牙不自觉地伸出','红瞳因情欲变得更血红','魔角发烫','恶魔尾巴不受控制缠上对方','羽翼炸开','翼根痉挛','狼耳压平成飞机耳又竖起来来回摆动','鳞片泛起珠光般的光泽','淫纹发光发烫','魔纹在皮肤上蔓延','身体的魔力回路被填满到溢出的感觉','魔力被对方抽走时的虚脱与快感','魔力被灌入时的充盈与涨满','因魔力暴走浑身颤抖','在魔法阵上弓起身体又被按回去','仰头露出喉结被咬住的服从姿态']},
+    {title:'私藏XP细节',type:'multi',tags:['圣骑士一边念祈祷词一边失控','神父在祭坛前被拉下神袍','圣女被恶魔吻到背后的天使印记发烫','骑士被摘下头盔时满脸潮红','勇者被魔王夺走第一次后对魔王身体的依赖','魔王被勇者反制时露出的难以置信表情','精灵被人类吻耳尖到站不住','高等精灵被低等种族弄到失态','血族被自己的血奴反咬时的惊愕与兴奋','狼人被伴侣抚摸尾巴根部时的呜咽','龙族被抚摸逆鳞时又爽又危险','屠龙者最终被龙占有成为龙的伴侣','死灵法师用冰冷的指尖触碰活人温热的身体','佣兵团长在帐篷里被团员听见却无法停下','魔法塔里师徒以教学为名互相试探']}
+  ]}
+];
+
+// 渲染西幻标签函数
+function renderFantasyTags(){
+  const container=document.getElementById('fantasy-tags-container');
+  if(!container) return;
+  let html='';
+  fantasySections.forEach(section=>{
+    if(section.type==='custom'){
+      html+=renderFantasyCustomSection(section);
+      return;
+    }
+    html+=`<div class="tag-section" id="section-${section.id}"><div class="tag-section-header" onclick="toggleSection('${section.id}')"><span class="tag-section-title">${section.title}</span><span class="tag-section-arrow">▼</span></div><div class="tag-section-body">`;
+    if(section.hint)html+=`<div class="tag-section-hint">${section.hint}</div>`;
+    if(section.type==='single'||section.type==='multi'){
+      html+=renderTagWrap(section.id,null,section.tags,section.type);
+      html+=renderAddRow(section.id,null);
+    }else if(section.type==='multi-sub'){
+      section.subs.forEach((sub,idx)=>{
+        html+=`<div class="tag-subsection-title">${sub.title}</div>`;
+        html+=renderTagWrap(section.id,idx,sub.tags,sub.type);
+        html+=renderAddRow(section.id,idx);
+      });
+    }else if(section.type==='three-state-sub'){
+      section.subs.forEach((sub,idx)=>{
+        html+=`<div class="tag-subsection-title">${sub.title}</div>`;
+        html+=renderTagWrap(section.id,idx,sub.tags,'three');
+        html+=renderAddRow(section.id,idx);
+      });
+    }
+    html+=`</div></div>`;
+  });
+  container.innerHTML=html;
+}
+
+function renderFantasyCustomSection(section){
+  if(section.id==='fan-basic-info'){
+    return `<div class="tag-section" id="section-fan-basic-info"><div class="tag-section-header" onclick="toggleSection('fan-basic-info')"><span class="tag-section-title">基础信息</span><span class="tag-section-arrow">▼</span></div><div class="tag-section-body"><div class="form-group"><label class="form-label">姓名</label><div class="name-row"><input class="form-input" type="text" id="fan-name" placeholder="可自行填写或留空让AI随机生成" oninput="updateFantasySummary()"><button class="name-random-btn" onclick="document.getElementById('fan-name').value='';updateFantasySummary();">清空</button></div></div><div class="form-group"><label class="form-label">外号/别称（可选）</label><input class="form-input" type="text" id="fan-nickname" placeholder="可填可不填" oninput="updateFantasySummary()"></div><div class="form-group"><label class="form-label">种族</label><input class="form-input" type="text" id="fan-race" placeholder="例：人类/精灵/矮人/半精灵等" oninput="updateFantasySummary()"></div><div class="form-group"><label class="form-label">性别</label><input class="form-input" type="text" id="fan-gender" placeholder="可自行填写" oninput="updateFantasySummary()"></div><div class="form-group"><label class="form-label">年龄</label><input class="form-input" type="text" id="fan-age" placeholder="例：23岁 / 数百年 / 未知" oninput="updateFantasySummary()"></div></div></div>`;
+  }
+  if(section.id==='fan-char-relation'){
+    return `<div class="tag-section" id="section-fan-char-relation"><div class="tag-section-header" onclick="toggleSection('fan-char-relation')"><span class="tag-section-title">你好👋，char！</span><span class="tag-section-arrow">▼</span></div><div class="tag-section-body"><div class="form-group"><label class="form-label">char信息</label><textarea class="form-textarea" id="fan-char-info" placeholder="导入角色卡后会自动填充，也可手动输入…" style="min-height:80px;" oninput="updateFantasySummary()"></textarea></div><div class="tag-subsection-title">u与c的关系（可多选）</div>${renderTagWrap('fan-char-relation',null,['血亲','仇敌','师徒','主仆','骑士与领主','封臣与宗主','神祇与信徒','祭司与忏悔者','魔法契约双方','灵魂绑定者','龙骑士与龙','召唤师与召唤兽','法师与魔宠','炼金术师与活体造物','恶魔与契约者','吸血鬼与血仆','吸血鬼与初拥子嗣','狼人与族群','血族长老与氏族','亡灵法师与亡灵仆从','寄生魔物与宿主','精灵与树灵共生体','矮人匠师与学徒','兽人战盟兄弟','半神与凡人后裔','天使与守望者','恶魔猎手与猎物','猎魔人与怪物','赏金猎人与逃犯','刺客与暗杀目标','盗贼公会同僚','佣兵与雇主','商人与客户','海盗船长与船员','国王与臣民','篡位者与正统继承人','预言家与命运之人','转世者与前世羁绊','被诅咒者与诅咒施加者','时空旅者与时代遗民','图书馆守护者与求知者','药剂师与病患','吟游诗人与听众','边境守卫与走私者','囚徒与狱卒','图腾战士与祖灵','元素使与元素之灵','流浪剑客与宿命之敌','双生子（命运纽带）','创世神与造物'],'multi')}${renderAddRow('fan-char-relation',null)}</div></div>`;
+  }
+  return '';
+}
+
+function updateFantasySummary(){
+  const parts=[];
+  const name=document.getElementById('fan-name')?.value.trim();
+  const nickname=document.getElementById('fan-nickname')?.value.trim();
+  const race=document.getElementById('fan-race')?.value.trim();
+  const gender=document.getElementById('fan-gender')?.value.trim();
+  const age=document.getElementById('fan-age')?.value.trim();
+  if(name)parts.push(`【姓名】${name}`);
+  if(nickname)parts.push(`【外号】${nickname}`);
+  if(race)parts.push(`【种族】${race}`);
+  if(gender)parts.push(`【性别】${gender}`);
+  if(age)parts.push(`【年龄】${age}`);
+  const charInfo=document.getElementById('fan-char-info')?.value.trim();
+  if(charInfo)parts.push(`【char信息】${charInfo}`);
+  
+  document.querySelectorAll('#fantasy-tags-container .tag-wrap').forEach(wrap=>{
+    const type=wrap.dataset.type;
+    const selected=[];
+    wrap.querySelectorAll('.tag-bubble').forEach(b=>{
+      if(type==='three'){
+        if(b.classList.contains('liked'))selected.push('👍'+b.dataset.tag);
+        else if(b.classList.contains('disliked'))selected.push('👎'+b.dataset.tag);
+      }else{
+        if(b.classList.contains('selected'))selected.push(b.dataset.tag);
+      }
+    });
+    if(selected.length){
+      const sectionEl=wrap.closest('.tag-section');
+      const titleEl=sectionEl?.querySelector('.tag-section-title');
+      const sectionTitle=titleEl?titleEl.textContent:'';
+      let subTitle='';
+      const prev=wrap.previousElementSibling;
+      if(prev&&prev.classList.contains('tag-subsection-title'))subTitle=prev.textContent.replace(/（.*）/,'');
+      const label=subTitle?`【${sectionTitle}-${subTitle}】`:`【${sectionTitle}】`;
+      parts.push(`${label}${selected.join('、')}`);
+    }
+  });
+  
+  const summaryEl=document.getElementById('fantasy-summary');
+  if(!summaryEl) return;
+  if(!parts.length){
+    summaryEl.innerHTML='<span class="summary-empty">还没有选择任何标签…</span>';
+  }else{
+    summaryEl.textContent=parts.join('\n');
+  }
+}
+
+async function doGenerateFantasy(){
+  if(isGenerating){
+    if(abortController)abortController.abort();
+    isGenerating=false;
+    const btn=document.getElementById('btn-gen-fantasy');
+    btn.textContent='🚀 生成人设';
+    btn.style.background='';
+    return;
+  }
+  
+  const summaryEl=document.getElementById('fantasy-summary');
+  if(!summaryEl) return;
+  const summaryText=summaryEl.textContent;
+  if(!summaryText||summaryText==='还没有选择任何标签…'){
+    showToast('请先选择一些标签！');
+    return;
+  }
+  
+  const apiConfig=getApiConfig('text');
+  if(!apiConfig||!apiConfig.url||!apiConfig.key){
+    showToast('请先在 API设置 中配置文字API！');
+    return;
+  }
+  
+  const wordCount=document.getElementById('fantasy-word-count')?.value||1000;
+  const systemPrompt=localStorage.getItem('ucreate_prompt_text')||document.getElementById('text-prompt').value;
+  const userMessage=`请根据以下用户选择的西幻人设标签和设定，生成一份完整的西幻角色人设。目标字数约${wordCount}字。\n\n用户选择的标签和信息如下：\n${summaryText}\n\n请基于以上信息，生成一份详细、生动、有层次感、充满奇幻氛围的角色人设。`;
+  
+  isGenerating=true;
+  abortController=new AbortController();
+  
+  const btn=document.getElementById('btn-gen-fantasy');
+  btn.textContent='⏹ 停止生成';
+  btn.style.background='#c53030';
+  
+  const resultBox=document.getElementById('fantasy-result-box');
+  const resultContent=document.getElementById('fantasy-result-content');
+  const resultStatus=document.getElementById('fantasy-result-status');
+  const resultActions=document.getElementById('fantasy-result-actions');
+  
+  resultBox.classList.add('show');
+  resultContent.textContent='';
+  resultContent.classList.add('cursor-blink');
+  resultStatus.textContent='生成中…';
+  resultStatus.className='result-status generating';
+  resultActions.style.display='none';
+  
+  setTimeout(()=>resultBox.scrollIntoView({behavior:'smooth',block:'start'}),100);
+  
+  try{
+    const res=await fetch(apiConfig.url.replace(/\/+$/,'')+'/chat/completions',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+apiConfig.key,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:apiConfig.model||'gpt-3.5-turbo',
+        messages:[{role:'system',content:systemPrompt},{role:'user',content:userMessage}],
+        stream:true,
+        max_tokens:Math.max(2000,Math.round(wordCount*2))
+      }),
+      signal:abortController.signal
+    });
+    
+    if(!res.ok)throw new Error('HTTP '+res.status+': '+(await res.text()).slice(0,200));
+    
+    const reader=res.body.getReader();
+    const decoder=new TextDecoder();
+    let fullText='';
+    let buffer='';
+    
+    while(true){
+      const{done,value}=await reader.read();
+      if(done)break;
+      buffer+=decoder.decode(value,{stream:true});
+      const lines=buffer.split('\n');
+      buffer=lines.pop()||'';
+      
+      for(const line of lines){
+        const trimmed=line.trim();
+        if(!trimmed||trimmed==='data: [DONE]')continue;
+        if(!trimmed.startsWith('data: '))continue;
+        try{
+          const json=JSON.parse(trimmed.slice(6));
+          const delta=json.choices?.[0]?.delta?.content;
+          if(delta){
+            fullText+=delta;
+            resultContent.textContent=fullText;
+            resultContent.scrollTop=resultContent.scrollHeight;
+          }
+        }catch(e){}
+      }
+    }
+    
+    resultContent.classList.remove('cursor-blink');
+    resultStatus.textContent=`生成完毕（约${fullText.length}字）`;
+    resultStatus.className='result-status';
+    resultActions.style.display='flex';
+    
+  }catch(err){
+    resultContent.classList.remove('cursor-blink');
+    if(err.name==='AbortError'){
+      resultStatus.textContent='已停止';
+      resultStatus.className='result-status';
+      if(resultContent.textContent.length>0)resultActions.style.display='flex';
+    }else{
+      resultStatus.textContent='出错了';
+      resultStatus.className='result-status';
+      resultContent.textContent='布豪！生成报错了！\n\n错误信息：'+err.message+'\n\n请检查 API 设置后重试。';
+    }
+  }
+  
+  isGenerating=false;
+  abortController=null;
+  btn.textContent='🚀 生成人设';
+  btn.style.background='';
+}
+loadApi('text');loadApi('img');loadPrompt('text');loadPrompt('img');renderArchives();renderGeneralTags();renderAncientTags();renderFantasyTags();
   </script>
 </body>
 </html>
