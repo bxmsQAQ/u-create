@@ -427,26 +427,26 @@
     function savePrompt(type){localStorage.setItem('ucreate_prompt_'+type,document.getElementById(type+'-prompt').value);showToast('保存成功！');}
     function loadPrompt(type){const s=localStorage.getItem('ucreate_prompt_'+type);if(s)document.getElementById(type+'-prompt').value=s;}
     function toggleUpload(type){document.getElementById('upload-'+type).classList.toggle('show',document.getElementById('check-'+type).checked);}
-    function handleFileSelect(type){
-  const i=document.getElementById('file-'+type);
-  document.getElementById('file-'+type+'-name').textContent=i.files.length>0?'已选择: '+i.files[0].name:'';
-  
-  if(!i.files.length) return;
-  const file=i.files[0];
+    async function handleFileSelect(type){
+  const input=document.getElementById('file-'+type);
+  const nameEl=document.getElementById('file-'+type+'-name');
+  if(!input.files.length){nameEl.textContent='';return;}
+  const file=input.files[0];
+  nameEl.textContent='已选择: '+file.name;
   const ext=file.name.split('.').pop().toLowerCase();
-  
-  // 确定要填入哪个文本框
-  let targetId=null;
-  if(type==='char-general') targetId='gen-char-info';
-  else if(type==='char-ancient') targetId='anc-char-info';
-  else if(type==='char-fantasy') targetId='fan-char-info';
-  
-  // 世界书暂时没有对应文本框，只显示文件名
-  if(!targetId) return;
-  
-  if(ext==='json'){
-    file.text().then(text=>{
+
+  // 角色卡填充到 char-info 文本框
+  let charTargetId=null;
+  if(type==='char-general') charTargetId='gen-char-info';
+  else if(type==='char-ancient') charTargetId='anc-char-info';
+  else if(type==='char-fantasy') charTargetId='fan-char-info';
+
+  if(charTargetId){
+    const target=document.getElementById(charTargetId);
+    if(!target) return;
+    if(ext==='json'){
       try{
+        const text=await file.text();
         const json=JSON.parse(text);
         let content='';
         if(json.data?.description) content=json.data.description;
@@ -454,21 +454,18 @@
         else if(json.char_persona) content=json.char_persona;
         else if(json.persona) content=json.persona;
         else content=JSON.stringify(json,null,2);
-        document.getElementById(targetId).value=content;
-      }catch(e){
-        file.text().then(t=>{document.getElementById(targetId).value=t;});
-      }
-    });
-  }else if(ext==='png'){
-    file.arrayBuffer().then(buffer=>{
+        target.value=content;
+      }catch(e){target.value=await file.text();}
+    }else if(ext==='png'){
       try{
+        const buffer=await file.arrayBuffer();
         const bytes=new Uint8Array(buffer);
         const decoder=new TextDecoder('latin1');
         const raw=decoder.decode(bytes);
-        const charaIdx=raw.indexOf('chara');
-        if(charaIdx===-1){document.getElementById(targetId).value='（未检测到角色卡数据）';return;}
-        let start=charaIdx+5;
-        while(start<raw.length&&raw.charCodeAt(start)===0)start++;
+        const charaIndex=raw.indexOf('chara');
+        if(charaIndex===-1){target.value='（未检测到角色卡数据）';return;}
+        let start=charaIndex+5;
+        while(start<raw.length&&raw.charCodeAt(start)===0) start++;
         let end=start;
         while(end<raw.length){const code=raw.charCodeAt(end);if(code===0||code===174)break;end++;}
         const b64=raw.slice(start,end).trim();
@@ -480,13 +477,24 @@
           else if(json.description) content=json.description;
           else if(json.char_persona) content=json.char_persona;
           else content=JSON.stringify(json,null,2);
-          document.getElementById(targetId).value=content;
-        }catch(e2){document.getElementById(targetId).value='（PNG角色卡解析失败）';}
-      }catch(e){document.getElementById(targetId).value='（文件读取失败）';}
-    });
+          target.value=content;
+        }catch(e2){target.value='（PNG角色卡解析失败）';}
+      }catch(e){target.value='（文件读取失败）';}
+    }
+    return;
+  }
+
+  // 世界书读取并存到 localStorage
+  if(type.startsWith('world-')){
+    if(ext==='json'){
+      try{
+        const text=await file.text();
+        localStorage.setItem('ucreate_worldbook_'+type,text);
+        showToast('世界书已加载！');
+      }catch(e){showToast('世界书读取失败');}
+    }
   }
 }
-
     // Archive
     function getArchives(){return JSON.parse(localStorage.getItem('ucreate_archives')||'[]');}
     function saveArchives(a){localStorage.setItem('ucreate_archives',JSON.stringify(a));}
